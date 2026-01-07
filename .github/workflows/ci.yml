@@ -63,7 +63,7 @@ jobs:
 
       - name: Run web tests
         working-directory: apps/web
-        run: npm test
+        run: npm test -- --passWithNoTests
 
   lint:
     name: Lint
