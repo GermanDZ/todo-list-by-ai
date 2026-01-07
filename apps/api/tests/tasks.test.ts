@@ -172,6 +172,60 @@ describe('Tasks API', () => {
       expect(response.body.error).toBe('Due date must be a valid ISO 8601 date string');
       expect(response.body.details?.field).toBe('dueDate');
     });
+
+    it('should create a task with a category', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with category', category: 'Work' });
+
+      expect(response.status).toBe(201);
+      expect(response.body.title).toBe('Task with category');
+      expect(response.body.category).toBe('Work');
+    });
+
+    it('should create a task without a category (null)', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task without category', category: null });
+
+      expect(response.status).toBe(201);
+      expect(response.body.title).toBe('Task without category');
+      expect(response.body.category).toBeNull();
+    });
+
+    it('should trim whitespace from category', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with trimmed category', category: '  Work  ' });
+
+      expect(response.status).toBe(201);
+      expect(response.body.category).toBe('Work');
+    });
+
+    it('should return 400 when category is too long', async () => {
+      const longCategory = 'a'.repeat(51);
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with long category', category: longCategory });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Category must be 50 characters or less');
+      expect(response.body.details?.field).toBe('category');
+    });
+
+    it('should treat empty string category as null', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with empty category', category: '   ' });
+
+      expect(response.status).toBe(201);
+      expect(response.body.category).toBeNull();
+    });
   });
 
   describe('GET /api/tasks', () => {
@@ -396,6 +450,56 @@ describe('Tasks API', () => {
       expect(response.body.dueDate).toBeTruthy();
       expect(new Date(response.body.dueDate).toISOString()).toBe(dueDate);
     });
+
+    it('should update task category', async () => {
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ category: 'Personal' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.category).toBe('Personal');
+    });
+
+    it('should clear task category when set to null', async () => {
+      // First set a category
+      await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ category: 'Work' });
+
+      // Then clear it
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ category: null });
+
+      expect(response.status).toBe(200);
+      expect(response.body.category).toBeNull();
+    });
+
+    it('should return 400 when category is too long', async () => {
+      const longCategory = 'a'.repeat(51);
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ category: longCategory });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Category must be 50 characters or less');
+      expect(response.body.details?.field).toBe('category');
+    });
+
+    it('should update both title and category', async () => {
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Updated task', category: 'Work' });
+
+      expect(response.status).toBe(200);
+      expect(response.body.title).toBe('Updated task');
+      expect(response.body.category).toBe('Work');
+    });
   });
 
   describe('DELETE /api/tasks/:id', () => {
@@ -580,6 +684,52 @@ describe('Tasks API', () => {
       );
       expect(taskWithoutDueDate).toBeTruthy();
       expect(taskWithoutDueDate.dueDate).toBeNull();
+    });
+  });
+
+  describe('Category functionality', () => {
+    it('should return category in task list', async () => {
+      await prisma.task.create({
+        data: {
+          title: 'Task with category',
+          userId: user1Id,
+          completed: false,
+          category: 'Work',
+        },
+      });
+
+      const response = await request(app)
+        .get('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`);
+
+      expect(response.status).toBe(200);
+      const taskWithCategory = response.body.find(
+        (task: any) => task.title === 'Task with category'
+      );
+      expect(taskWithCategory).toBeTruthy();
+      expect(taskWithCategory.category).toBe('Work');
+    });
+
+    it('should return null for tasks without category', async () => {
+      await prisma.task.create({
+        data: {
+          title: 'Task without category',
+          userId: user1Id,
+          completed: false,
+          category: null,
+        },
+      });
+
+      const response = await request(app)
+        .get('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`);
+
+      expect(response.status).toBe(200);
+      const taskWithoutCategory = response.body.find(
+        (task: any) => task.title === 'Task without category'
+      );
+      expect(taskWithoutCategory).toBeTruthy();
+      expect(taskWithoutCategory.category).toBeNull();
     });
   });
 });
