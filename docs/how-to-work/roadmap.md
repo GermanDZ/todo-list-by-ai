@@ -14,16 +14,16 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 ## Feature Priorities (MoSCoW)
 
-| Priority        | Feature        | Status      |
-| --------------- | -------------- | ----------- |
-| **Must Have**   | Core CRUD      | Not Started |
+| Priority        | Feature        | Status       |
+| --------------- | -------------- | ------------ |
+| **Must Have**   | Core CRUD      | Not Started  |
 | **Must Have**   | Auth System    | ✅ Completed |
-| **Must Have**   | State Toggle   | Not Started |
-| **Should Have** | Due Dates      | Backlog     |
-| **Should Have** | Categorization | Backlog     |
-| **Should Have** | Persistence    | Backlog     |
-| **Could Have**  | Dark Mode      | Backlog     |
-| **Could Have**  | Search/Filter  | Backlog     |
+| **Must Have**   | State Toggle   | Not Started  |
+| **Should Have** | Due Dates      | Backlog      |
+| **Should Have** | Categorization | Backlog      |
+| **Should Have** | Persistence    | Backlog      |
+| **Could Have**  | Dark Mode      | Backlog      |
+| **Could Have**  | Search/Filter  | Backlog      |
 
 ---
 
@@ -112,7 +112,8 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Status**: ✅ **Completed** (2026-01-07)
 
-**Summary**: 
+**Summary**:
+
 - All authentication endpoints implemented and tested
 - Frontend auth UI with registration and login forms
 - JWT-based authentication with refresh token rotation
