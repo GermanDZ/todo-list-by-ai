@@ -1,4 +1,5 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react';
+import { LoadingSpinner } from './LoadingSpinner.js';
 
 interface AddTaskInputProps {
   onCreateTask: (title: string) => Promise<void>;
@@ -63,8 +64,10 @@ export const AddTaskInput = forwardRef<AddTaskInputRef, AddTaskInputProps>(
         <button
           type="submit"
           disabled={disabled || isSubmitting || !title.trim()}
-          className="w-full sm:w-auto px-6 py-3 min-h-[44px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-base"
+          className="w-full sm:w-auto px-6 py-3 min-h-[44px] bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-base flex items-center justify-center gap-2"
+          aria-busy={isSubmitting}
         >
+          {isSubmitting && <LoadingSpinner size="sm" className="text-white" />}
           {isSubmitting ? 'Adding...' : 'Add'}
         </button>
       </div>

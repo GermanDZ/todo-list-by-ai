@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Task } from '../types/api.js';
 import { TaskItem } from './TaskItem.js';
+import { TaskListSkeleton } from './TaskListSkeleton.js';
 
 interface TaskListProps {
   tasks: Task[];
@@ -23,9 +24,7 @@ export function TaskList({
   const completedTasks = tasks.filter((task) => task.completed);
 
   if (loading) {
-    return (
-      <div className="text-center py-8 sm:py-12 text-sm sm:text-base text-gray-500">Loading tasks...</div>
-    );
+    return <TaskListSkeleton />;
   }
 
   if (tasks.length === 0) {
