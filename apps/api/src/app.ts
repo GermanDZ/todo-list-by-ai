@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import { requestLogger } from './middleware/loggingMiddleware.js';
 import {
   handleDatabaseError,
   isAppError,
@@ -26,6 +27,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Request logging middleware (before routes)
+app.use(requestLogger);
 
 // Health check endpoint
 app.get('/api/health', (_req, res) => {
