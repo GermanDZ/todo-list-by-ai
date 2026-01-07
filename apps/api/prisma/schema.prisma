@@ -35,6 +35,8 @@ model Task {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+  @@index([completed])
   @@map("tasks")
 }
 
