@@ -72,3 +72,4 @@ apps/api/node_modules/.prisma/
 *.db
 *.sqlite
 *.sqlite3
+cookies.txt
