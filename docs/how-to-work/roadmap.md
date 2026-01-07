@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07 (Sprint 1 completed)
+> Last updated: 2026-01-07 (Sprint 2 completed)
 
 ---
 
@@ -16,9 +16,9 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 | Priority        | Feature        | Status       |
 | --------------- | -------------- | ------------ |
-| **Must Have**   | Core CRUD      | Not Started  |
+| **Must Have**   | Core CRUD      | ✅ Completed |
 | **Must Have**   | Auth System    | ✅ Completed |
-| **Must Have**   | State Toggle   | Not Started  |
+| **Must Have**   | State Toggle   | ✅ Completed |
 | **Should Have** | Due Dates      | Backlog      |
 | **Should Have** | Categorization | Backlog      |
 | **Should Have** | Persistence    | Backlog      |
@@ -128,45 +128,45 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Tasks**:
 
-- [ ] Design database schema for Tasks table
-- [ ] Implement create task endpoint (`POST /api/tasks`)
-  - [ ] Validate user authentication (JWT middleware)
-  - [ ] Validate task title (required, non-empty)
-  - [ ] Associate task with user
-  - [ ] Store creation timestamp
-- [ ] Implement list tasks endpoint (`GET /api/tasks`)
-  - [ ] Filter by authenticated user
-  - [ ] Return tasks with creation date
-  - [ ] Support optional filtering (completed/incomplete)
-- [ ] Implement update task endpoint (`PATCH /api/tasks/:id`)
-  - [ ] Validate task ownership
-  - [ ] Update task title
-  - [ ] Update completion status
-- [ ] Implement delete task endpoint (`DELETE /api/tasks/:id`)
-  - [ ] Validate task ownership
-  - [ ] Soft delete or hard delete (TBD)
-- [ ] Implement toggle completion endpoint (`PATCH /api/tasks/:id/toggle`)
-  - [ ] Toggle `completed` boolean
-  - [ ] Update `updatedAt` timestamp
-- [ ] Create frontend task list component
-  - [ ] Display tasks with creation date
-  - [ ] Show task labels (if any)
-- [ ] Create frontend "Add Task" input
-  - [ ] Visible at top of main view
-  - [ ] Enter key saves task
-  - [ ] No page refresh on submit
-  - [ ] Optimistic UI update
-- [ ] Create frontend task item component
-  - [ ] Display task title
-  - [ ] Display creation date (human-readable)
-  - [ ] Checkbox for completion toggle
-  - [ ] Strike-through animation on completion
-- [ ] Create frontend task edit functionality
-  - [ ] Inline editing or modal (TBD)
-- [ ] Create frontend task delete functionality
-- [ ] Implement "Done" section (optional)
-  - [ ] Completed tasks move to bottom section
-  - [ ] Toggle to show/hide completed tasks
+- [x] Design database schema for Tasks table
+- [x] Implement create task endpoint (`POST /api/tasks`)
+  - [x] Validate user authentication (JWT middleware)
+  - [x] Validate task title (required, non-empty)
+  - [x] Associate task with user
+  - [x] Store creation timestamp
+- [x] Implement list tasks endpoint (`GET /api/tasks`)
+  - [x] Filter by authenticated user
+  - [x] Return tasks with creation date
+  - [x] Support optional filtering (completed/incomplete)
+- [x] Implement update task endpoint (`PATCH /api/tasks/:id`)
+  - [x] Validate task ownership
+  - [x] Update task title
+  - [x] Update completion status
+- [x] Implement delete task endpoint (`DELETE /api/tasks/:id`)
+  - [x] Validate task ownership
+  - [x] Hard delete (chosen for MVP simplicity)
+- [x] Implement toggle completion endpoint (`PATCH /api/tasks/:id/toggle`)
+  - [x] Toggle `completed` boolean
+  - [x] Update `updatedAt` timestamp
+- [x] Create frontend task list component
+  - [x] Display tasks with creation date
+  - [x] Show task labels (if any) - deferred to Sprint 4
+- [x] Create frontend "Add Task" input
+  - [x] Visible at top of main view
+  - [x] Enter key saves task
+  - [x] No page refresh on submit
+  - [x] Optimistic UI update
+- [x] Create frontend task item component
+  - [x] Display task title
+  - [x] Display creation date (human-readable)
+  - [x] Checkbox for completion toggle
+  - [x] Strike-through animation on completion
+- [x] Create frontend task edit functionality
+  - [x] Inline editing (double-click to edit)
+- [x] Create frontend task delete functionality
+- [x] Implement "Done" section (optional)
+  - [x] Completed tasks move to bottom section
+  - [x] Toggle to show/hide completed tasks
 
 **Acceptance Criteria** (from [Features](../features.md)):
 
@@ -181,8 +181,21 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - Optimistic UI updates for better perceived performance
 - Task ownership enforced at API level (users can only access their own tasks)
 - Creation date formatted as "2 hours ago" or "Jan 7, 2026" (human-readable)
+- Hard delete chosen for MVP simplicity (can add soft delete later if needed)
+- Inline editing implemented (double-click to edit, Enter to save, Escape to cancel)
 
 **Output**: Full CRUD functionality for tasks with completion toggle
+
+**Status**: ✅ **Completed** (2026-01-07)
+
+**Summary**:
+
+- All task CRUD endpoints implemented and tested
+- Frontend task management UI with optimistic updates
+- Task creation, editing, deletion, and completion toggle
+- Active/Done sections with show/hide completed toggle
+- Human-readable date formatting
+- 29 new integration tests passing (44 total tests)
 
 ---
 
@@ -300,7 +313,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 2**: Tasks MVP (see above)
+1. **Sprint 3**: Persistence & Polish (see above)
 
 ---
 
@@ -323,6 +336,7 @@ _Move tasks here when done. Include the PR number._
 | -------- | --------------------- | ------- | ---------- |
 | Sprint 0 | Foundation setup      | 6570ca2 | 2026-01-07 |
 | Sprint 1 | Authentication System | -       | 2026-01-07 |
+| Sprint 2 | Tasks MVP             | -       | 2026-01-07 |
 
 ---
 
