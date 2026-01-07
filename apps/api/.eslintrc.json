@@ -7,6 +7,7 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint"],
+  "ignorePatterns": ["dist/**", "tests/**", "*.config.ts", "*.config.js"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "error",

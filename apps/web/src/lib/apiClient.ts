@@ -16,6 +16,12 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 let accessToken: string | null = null;
 let refreshPromise: Promise<string> | null = null;
 
+// Extended Error type for API errors
+interface ApiErrorWithStatus extends Error {
+  status?: number;
+  code?: string;
+}
+
 /**
  * Set the access token (called after login/register/refresh)
  */
@@ -74,6 +80,25 @@ async function refreshAccessToken(): Promise<string> {
 }
 
 /**
+ * Get user-friendly error message based on HTTP status code
+ */
+function getStatusMessage(status: number): string {
+  const statusMessages: Record<number, string> = {
+    400: 'Invalid request. Please check your input.',
+    401: 'Authentication required. Please log in.',
+    403: 'You do not have permission to perform this action.',
+    404: 'The requested resource was not found.',
+    409: 'This resource already exists.',
+    422: 'The request could not be processed.',
+    500: 'A server error occurred. Please try again later.',
+    502: 'Service temporarily unavailable. Please try again later.',
+    503: 'Service temporarily unavailable. Please try again later.',
+  };
+
+  return statusMessages[status] || 'An unexpected error occurred. Please try again.';
+}
+
+/**
  * Make an API request with automatic token management
  */
 async function apiRequest<T>(
@@ -82,48 +107,76 @@ async function apiRequest<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // Add access token to headers if available
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
+  // Handle network errors (offline, timeout, etc.)
+  try {
+    // Add access token to headers if available
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
+    };
 
-  if (accessToken) {
-    headers['Authorization'] = `Bearer ${accessToken}`;
-  }
-
-  let response = await fetch(url, {
-    ...options,
-    headers,
-    credentials: 'include', // Include cookies for refresh token
-  });
-
-  // If 401, try to refresh token and retry
-  if (response.status === 401 && accessToken) {
-    try {
-      const newToken = await refreshAccessToken();
-      // Retry request with new token
-      headers['Authorization'] = `Bearer ${newToken}`;
-      response = await fetch(url, {
-        ...options,
-        headers,
-        credentials: 'include',
-      });
-    } catch (refreshError) {
-      // Refresh failed, clear token and throw
-      accessToken = null;
-      throw new Error('Session expired. Please log in again.');
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
     }
-  }
 
-  if (!response.ok) {
-    const error: ApiError = await response.json().catch(() => ({
-      error: 'An error occurred',
-    }));
-    throw new Error(error.error || 'An error occurred');
-  }
+    let response = await fetch(url, {
+      ...options,
+      headers: headers as HeadersInit,
+      credentials: 'include', // Include cookies for refresh token
+    });
 
-  return response.json();
+    // If 401, try to refresh token and retry
+    if (response.status === 401 && accessToken) {
+      try {
+        const newToken = await refreshAccessToken();
+        // Retry request with new token
+        headers['Authorization'] = `Bearer ${newToken}`;
+        response = await fetch(url, {
+          ...options,
+          headers: headers as HeadersInit,
+          credentials: 'include',
+        });
+      } catch (refreshError) {
+        // Refresh failed, clear token and throw
+        accessToken = null;
+        throw new Error('Session expired. Please log in again.');
+      }
+    }
+
+    if (!response.ok) {
+      // Try to extract error message from response
+      let errorMessage = 'An error occurred';
+      let errorCode: string | undefined;
+
+      try {
+        const error: ApiError = await response.json();
+        errorMessage = error.error || errorMessage;
+        errorCode = error.code;
+      } catch {
+        // If JSON parsing fails, use status-based message
+        errorMessage = getStatusMessage(response.status);
+      }
+
+      // Create error with user-friendly message
+      const error = new Error(errorMessage) as ApiErrorWithStatus;
+      error.status = response.status;
+      error.code = errorCode;
+      throw error;
+    }
+
+    return response.json();
+  } catch (fetchError) {
+    // Handle network errors (offline, CORS, timeout, etc.)
+    if (fetchError instanceof TypeError && fetchError.message === 'Failed to fetch') {
+      throw new Error('Network error. Please check your internet connection.');
+    }
+    // Re-throw if it's already an Error we created
+    if (fetchError instanceof Error) {
+      throw fetchError;
+    }
+    // Unknown error
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
 }
 
 /**

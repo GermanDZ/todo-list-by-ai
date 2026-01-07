@@ -1,8 +1,20 @@
 // Type definitions for the API
 // Shared types will be imported from @taskflow/shared once that package is set up
 
+export enum ErrorCode {
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  NOT_FOUND = 'NOT_FOUND',
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  FORBIDDEN = 'FORBIDDEN',
+  CONFLICT = 'CONFLICT',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+  DATABASE_ERROR = 'DATABASE_ERROR',
+}
+
 export interface ApiError {
   error: string;
+  code?: ErrorCode;
+  details?: Record<string, unknown>;
 }
 
 export interface HealthResponse {

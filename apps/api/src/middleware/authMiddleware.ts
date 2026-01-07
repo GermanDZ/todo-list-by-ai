@@ -26,7 +26,7 @@ export function authenticateToken(
       id: decoded.userId,
       email: decoded.email,
     };
-    next();
+    return next();
   } catch (error) {
     if (error instanceof Error) {
       return res.status(401).json({ error: error.message });

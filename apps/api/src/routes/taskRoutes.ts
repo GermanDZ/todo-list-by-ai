@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../services/prismaClient.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import { validateTaskTitle, verifyTaskOwnership } from '../services/taskService.js';
@@ -7,7 +7,9 @@ import {
   UpdateTaskRequest,
   AuthRequest,
   TaskResponse,
+  ErrorCode,
 } from '../types/index.js';
+import { createError } from '../utils/errors.js';
 
 const router = Router();
 
@@ -18,7 +20,7 @@ router.use(authenticateToken);
  * POST /api/tasks
  * Create a new task
  */
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { title }: CreateTaskRequest = req.body;
     const userId = (req as AuthRequest).userId!;
@@ -26,7 +28,7 @@ router.post('/', async (req: Request, res: Response) => {
     // Validate title
     const titleError = validateTaskTitle(title);
     if (titleError) {
-      return res.status(400).json({ error: titleError });
+      return next(createError(titleError, 400, ErrorCode.VALIDATION_ERROR, { field: 'title' }));
     }
 
     // Create task
@@ -50,8 +52,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     return res.status(201).json(response);
   } catch (error) {
-    console.error('Error creating task:', error);
-    return res.status(500).json({ error: 'Failed to create task' });
+    next(error);
   }
 });
 
@@ -59,7 +60,7 @@ router.post('/', async (req: Request, res: Response) => {
  * GET /api/tasks
  * List tasks for the authenticated user
  */
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as AuthRequest).userId!;
     const completed = req.query.completed;
@@ -96,8 +97,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     return res.json(response);
   } catch (error) {
-    console.error('Error fetching tasks:', error);
-    return res.status(500).json({ error: 'Failed to fetch tasks' });
+    return next(error);
   }
 });
 
@@ -105,7 +105,7 @@ router.get('/', async (req: Request, res: Response) => {
  * PATCH /api/tasks/:id
  * Update a task
  */
-router.patch('/:id', async (req: Request, res: Response) => {
+router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const taskId = req.params.id;
     const userId = (req as AuthRequest).userId!;
@@ -114,14 +114,14 @@ router.patch('/:id', async (req: Request, res: Response) => {
     // Verify task ownership
     const existingTask = await verifyTaskOwnership(taskId, userId);
     if (!existingTask) {
-      return res.status(404).json({ error: 'Task not found' });
+      return next(createError('Task not found', 404, ErrorCode.NOT_FOUND));
     }
 
     // Validate title if provided
     if (title !== undefined) {
       const titleError = validateTaskTitle(title);
       if (titleError) {
-        return res.status(400).json({ error: titleError });
+        return next(createError(titleError, 400, ErrorCode.VALIDATION_ERROR, { field: 'title' }));
       }
     }
 
@@ -157,8 +157,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
 
     return res.json(response);
   } catch (error) {
-    console.error('Error updating task:', error);
-    return res.status(500).json({ error: 'Failed to update task' });
+    return next(error);
   }
 });
 
@@ -166,7 +165,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
  * DELETE /api/tasks/:id
  * Delete a task
  */
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const taskId = req.params.id;
     const userId = (req as AuthRequest).userId!;
@@ -174,7 +173,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     // Verify task ownership
     const existingTask = await verifyTaskOwnership(taskId, userId);
     if (!existingTask) {
-      return res.status(404).json({ error: 'Task not found' });
+      return next(createError('Task not found', 404, ErrorCode.NOT_FOUND));
     }
 
     // Delete task
@@ -184,8 +183,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     return res.status(204).send();
   } catch (error) {
-    console.error('Error deleting task:', error);
-    return res.status(500).json({ error: 'Failed to delete task' });
+    next(error);
   }
 });
 
@@ -193,7 +191,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
  * PATCH /api/tasks/:id/toggle
  * Toggle task completion status
  */
-router.patch('/:id/toggle', async (req: Request, res: Response) => {
+router.patch('/:id/toggle', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const taskId = req.params.id;
     const userId = (req as AuthRequest).userId!;
@@ -201,7 +199,7 @@ router.patch('/:id/toggle', async (req: Request, res: Response) => {
     // Verify task ownership
     const existingTask = await verifyTaskOwnership(taskId, userId);
     if (!existingTask) {
-      return res.status(404).json({ error: 'Task not found' });
+      return next(createError('Task not found', 404, ErrorCode.NOT_FOUND));
     }
 
     // Toggle completion
@@ -225,8 +223,7 @@ router.patch('/:id/toggle', async (req: Request, res: Response) => {
 
     return res.json(response);
   } catch (error) {
-    console.error('Error toggling task:', error);
-    return res.status(500).json({ error: 'Failed to toggle task' });
+    return next(error);
   }
 });
 

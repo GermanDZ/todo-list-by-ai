@@ -272,6 +272,7 @@ describe('Tasks API', () => {
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('Task not found');
+      expect(response.body.code).toBe('NOT_FOUND');
     });
 
     it('should return 404 when task belongs to another user', async () => {

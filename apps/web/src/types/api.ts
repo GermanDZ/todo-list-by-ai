@@ -28,6 +28,8 @@ export interface RefreshResponse {
 
 export interface ApiError {
   error: string;
+  code?: string;
+  details?: Record<string, unknown>;
 }
 
 export interface LogoutResponse {

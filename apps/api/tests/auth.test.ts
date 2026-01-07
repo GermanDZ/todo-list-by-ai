@@ -51,6 +51,7 @@ describe('Authentication API', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Email and password are required');
+      expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     it('should return 400 when password is missing', async () => {
@@ -60,6 +61,7 @@ describe('Authentication API', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Email and password are required');
+      expect(response.body.code).toBe('VALIDATION_ERROR');
     });
 
     it('should return 400 when email format is invalid', async () => {
@@ -69,6 +71,8 @@ describe('Authentication API', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Invalid email format');
+      expect(response.body.code).toBe('VALIDATION_ERROR');
+      expect(response.body.details).toHaveProperty('field', 'email');
     });
 
     it('should return 400 when password is too short', async () => {
@@ -80,7 +84,7 @@ describe('Authentication API', () => {
       expect(response.body.error).toBe('Password must be at least 8 characters');
     });
 
-    it('should return 400 when email already exists', async () => {
+    it('should return 409 when email already exists', async () => {
       // Register first user
       await request(app).post('/api/auth/register').send(testUser);
 
@@ -89,8 +93,10 @@ describe('Authentication API', () => {
         .post('/api/auth/register')
         .send(testUser);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(409);
       expect(response.body.error).toBe('Email already registered');
+      expect(response.body.code).toBe('CONFLICT');
+      expect(response.body.details).toHaveProperty('field', 'email');
     });
   });
 

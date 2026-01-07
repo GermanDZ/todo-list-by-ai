@@ -3,6 +3,8 @@ import { AuthPage } from './components/AuthPage.js';
 import { ProtectedRoute } from './components/ProtectedRoute.js';
 import { AddTaskInput } from './components/AddTaskInput.js';
 import { TaskList } from './components/TaskList.js';
+import { ErrorBoundary } from './components/ErrorBoundary.js';
+import { ErrorMessage } from './components/ErrorMessage.js';
 import { useAuth } from './hooks/useAuth.js';
 import { useTasks } from './hooks/useTasks.js';
 
@@ -42,9 +44,15 @@ function HomePage() {
           <AddTaskInput onCreateTask={createTask} disabled={loading} />
           
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
-              {error}
-            </div>
+            <ErrorMessage
+              message={error}
+              type="error"
+              dismissible
+              onDismiss={() => {
+                // Clear error from useTasks hook if it has a clearError method
+                // For now, errors are cleared on new operations
+              }}
+            />
           )}
 
           <TaskList
@@ -62,20 +70,22 @@ function HomePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <HomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

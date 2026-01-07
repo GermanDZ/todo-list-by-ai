@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../services/prismaClient.js';
 import {
   hashPassword,
@@ -14,7 +14,8 @@ import {
   findRefreshToken,
   deleteRefreshToken,
 } from '../services/refreshTokenService.js';
-import { RegisterRequest, LoginRequest, AuthResponse } from '../types/index.js';
+import { RegisterRequest, LoginRequest, AuthResponse, ErrorCode } from '../types/index.js';
+import { createError } from '../utils/errors.js';
 
 const router = Router();
 
@@ -22,23 +23,21 @@ const router = Router();
  * POST /api/auth/register
  * Register a new user
  */
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password }: RegisterRequest = req.body;
 
     // Validate input
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+      return next(createError('Email and password are required', 400, ErrorCode.VALIDATION_ERROR));
     }
 
     if (!validateEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email format' });
+      return next(createError('Invalid email format', 400, ErrorCode.VALIDATION_ERROR, { field: 'email' }));
     }
 
     if (!validatePassword(password)) {
-      return res
-        .status(400)
-        .json({ error: 'Password must be at least 8 characters' });
+      return next(createError('Password must be at least 8 characters', 400, ErrorCode.VALIDATION_ERROR, { field: 'password' }));
     }
 
     // Check if user already exists
@@ -47,7 +46,7 @@ router.post('/register', async (req: Request, res: Response) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return next(createError('Email already registered', 409, ErrorCode.CONFLICT, { field: 'email' }));
     }
 
     // Hash password and create user
@@ -89,8 +88,7 @@ router.post('/register', async (req: Request, res: Response) => {
 
     res.status(201).json(response);
   } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
@@ -98,13 +96,13 @@ router.post('/register', async (req: Request, res: Response) => {
  * POST /api/auth/login
  * Login with email and password
  */
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password }: LoginRequest = req.body;
 
     // Validate input
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+      return next(createError('Email and password are required', 400, ErrorCode.VALIDATION_ERROR));
     }
 
     // Find user
@@ -113,13 +111,13 @@ router.post('/login', async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return next(createError('Invalid email or password', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Verify password
     const isValidPassword = await verifyPassword(password, user.passwordHash);
     if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return next(createError('Invalid email or password', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Delete any existing refresh tokens for this user (limit to one active session)
@@ -157,8 +155,7 @@ router.post('/login', async (req: Request, res: Response) => {
 
     res.json(response);
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
@@ -166,12 +163,12 @@ router.post('/login', async (req: Request, res: Response) => {
  * POST /api/auth/refresh
  * Refresh access token using refresh token
  */
-router.post('/refresh', async (req: Request, res: Response) => {
+router.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).json({ error: 'Refresh token required' });
+      return next(createError('Refresh token required', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Verify refresh token
@@ -179,19 +176,19 @@ router.post('/refresh', async (req: Request, res: Response) => {
     try {
       decoded = verifyToken(refreshToken);
     } catch (error) {
-      return res.status(401).json({ error: 'Invalid or expired refresh token' });
+      return next(createError('Invalid or expired refresh token', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Check if token exists in database
     const tokenRecord = await findRefreshToken(refreshToken);
     if (!tokenRecord) {
-      return res.status(401).json({ error: 'Refresh token not found' });
+      return next(createError('Refresh token not found', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Check if token is expired
     if (tokenRecord.expiresAt < new Date()) {
       await deleteRefreshToken(refreshToken);
-      return res.status(401).json({ error: 'Refresh token expired' });
+      return next(createError('Refresh token expired', 401, ErrorCode.UNAUTHORIZED));
     }
 
     // Generate new tokens (rotation)
@@ -223,8 +220,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
     // Return new access token
     res.json({ accessToken: newAccessToken });
   } catch (error) {
-    console.error('Refresh error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 
@@ -232,7 +228,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
  * POST /api/auth/logout
  * Logout and invalidate refresh token
  */
-router.post('/logout', async (req: Request, res: Response) => {
+router.post('/logout', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
 
@@ -255,8 +251,7 @@ router.post('/logout', async (req: Request, res: Response) => {
 
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error);
   }
 });
 

@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
+import { ErrorMessage } from './ErrorMessage.js';
 
 export function LoginForm() {
   const { login, isLoading, error, clearError } = useAuth();
@@ -58,7 +59,7 @@ export function LoginForm() {
         />
       </div>
 
-      {error && <div className="text-red-600 text-sm">{error}</div>}
+      {error && <ErrorMessage message={error} type="error" />}
 
       <button
         type="submit"

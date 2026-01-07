@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useAuth } from '../hooks/useAuth.js';
 import { useNavigate } from 'react-router-dom';
+import { ErrorMessage } from './ErrorMessage.js';
 
 export function RegisterForm() {
   const { register, isLoading, error, clearError } = useAuth();
@@ -84,7 +85,7 @@ export function RegisterForm() {
       </div>
 
       {displayError && (
-        <div className="text-red-600 text-sm">{displayError}</div>
+        <ErrorMessage message={displayError} type="error" />
       )}
 
       <button

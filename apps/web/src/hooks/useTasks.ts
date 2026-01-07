@@ -5,8 +5,8 @@ import {
   updateTask,
   deleteTask,
   toggleTask,
-  Task,
 } from '../lib/apiClient.js';
+import { Task } from '../types/api.js';
 
 interface UseTasksReturn {
   tasks: Task[];
