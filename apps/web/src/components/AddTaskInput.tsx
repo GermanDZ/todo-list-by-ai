@@ -1,14 +1,27 @@
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle, useRef } from 'react';
 
 interface AddTaskInputProps {
   onCreateTask: (title: string) => Promise<void>;
   disabled?: boolean;
 }
 
-export function AddTaskInput({ onCreateTask, disabled = false }: AddTaskInputProps) {
-  const [title, setTitle] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface AddTaskInputRef {
+  focus: () => void;
+}
+
+export const AddTaskInput = forwardRef<AddTaskInputRef, AddTaskInputProps>(
+  ({ onCreateTask, disabled = false }, ref) => {
+    const [title, setTitle] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    // Expose focus method via ref
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+    }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +49,7 @@ export function AddTaskInput({ onCreateTask, disabled = false }: AddTaskInputPro
     <form onSubmit={handleSubmit} className="mb-4 sm:mb-6">
       <div className="flex flex-col sm:flex-row gap-2">
         <input
+          ref={inputRef}
           type="text"
           value={title}
           onChange={(e) => {
@@ -59,5 +73,6 @@ export function AddTaskInput({ onCreateTask, disabled = false }: AddTaskInputPro
       )}
     </form>
   );
-}
+  }
+);
 
