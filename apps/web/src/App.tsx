@@ -1,14 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthPage } from './components/AuthPage.js';
 import { ProtectedRoute } from './components/ProtectedRoute.js';
+import { AddTaskInput } from './components/AddTaskInput.js';
+import { TaskList } from './components/TaskList.js';
 import { useAuth } from './hooks/useAuth.js';
+import { useTasks } from './hooks/useTasks.js';
 
 function HomePage() {
   const { user, logout } = useAuth();
+  const { tasks, loading, error, createTask, updateTask, deleteTask, toggleTask } =
+    useTasks();
+
+  const handleUpdateTask = async (id: string, title: string) => {
+    await updateTask(id, { title });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">TaskFlow</h1>
@@ -28,8 +37,23 @@ function HomePage() {
             </div>
           )}
         </div>
+
         <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-gray-600">Your tasks will appear here...</p>
+          <AddTaskInput onCreateTask={createTask} disabled={loading} />
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
+          <TaskList
+            tasks={tasks}
+            loading={loading}
+            onToggle={toggleTask}
+            onUpdate={handleUpdateTask}
+            onDelete={deleteTask}
+          />
         </div>
       </div>
     </div>
