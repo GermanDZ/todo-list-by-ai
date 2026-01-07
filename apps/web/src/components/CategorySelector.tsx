@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DEFAULT_CATEGORIES, validateCategory, normalizeCategory } from '../utils/categories.js';
+import { DEFAULT_CATEGORIES, validateCategory, normalizeCategory, isDefaultCategory } from '../utils/categories.js';
 
 interface CategorySelectorProps {
   value: string | null;
@@ -30,7 +30,7 @@ export function CategorySelector({
     } else if (selectedValue === 'custom') {
       // Switch to custom input
       setIsCustom(true);
-      setCustomValue(value && !DEFAULT_CATEGORIES.includes(value as any) ? value : '');
+      setCustomValue(value && !isDefaultCategory(value) ? value : '');
     } else {
       // Select default category
       onChange(selectedValue);
@@ -73,7 +73,7 @@ export function CategorySelector({
   };
 
   // Determine if we should show custom input or dropdown
-  const showCustomInput = isCustom || (value && !DEFAULT_CATEGORIES.includes(value as any));
+  const showCustomInput = isCustom || (value !== null && !isDefaultCategory(value));
 
   return (
     <div className="flex flex-col gap-1">
