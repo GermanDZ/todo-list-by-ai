@@ -143,7 +143,7 @@ describe('AddTaskInput', () => {
   it('should_show_loading_state_during_submission', async () => {
     const user = userEvent.setup();
     const onCreateTask = vi.fn(
-      () => new Promise((resolve) => setTimeout(() => resolve(undefined), 100))
+      (): Promise<void> => new Promise((resolve) => setTimeout(() => resolve(undefined), 100))
     );
     render(<AddTaskInput onCreateTask={onCreateTask} />);
 

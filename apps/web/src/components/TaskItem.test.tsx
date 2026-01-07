@@ -142,7 +142,7 @@ describe('TaskItem', () => {
     const titleElement = screen.getByText('Original');
     await user.dblClick(titleElement);
 
-    const input = screen.getByDisplayValue('Original');
+    screen.getByDisplayValue('Original'); // Verify input is shown
     await user.tab(); // Blur without changes
 
     await waitFor(() => {

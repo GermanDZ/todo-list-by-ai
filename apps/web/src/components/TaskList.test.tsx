@@ -185,10 +185,7 @@ describe('TaskList', () => {
       />
     );
 
-    const categoryFilter = screen.getByLabelText(/Filter by category/);
-    // Filter by a category that doesn't exist in the tasks
-    // But first we need a task with a category that's not in the list
-    // Actually, let's filter by due date instead - filter for "today" when no tasks are due today
+    // Filter by due date - filter for "today" when no tasks are due today
     const dueDateFilter = screen.getByLabelText(/Filter by due date/);
     await user.selectOptions(dueDateFilter, 'today');
 
