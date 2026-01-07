@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07 (Error handling completed)
+> Last updated: 2026-01-07 (Loading states completed)
 
 ---
 
@@ -215,9 +215,9 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
   - [x] Frontend error boundaries
   - [x] Network error handling
   - [x] Token expiration handling
-- [ ] Implement loading states
-  - [ ] Skeleton loaders for task list
-  - [ ] Button loading states
+- [x] Implement loading states
+  - [x] Skeleton loaders for task list
+  - [x] Button loading states
 - [x] Implement mobile responsiveness
   - [x] Touch-friendly interactions
   - [x] Responsive typography and spacing
@@ -238,7 +238,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Output**: Polished, responsive, production-ready MVP
 
-**Status**: 🚧 **In Progress** (Keyboard shortcuts completed 2026-01-07)
+**Status**: 🚧 **In Progress** (Loading states completed 2026-01-07)
 
 **Summary**:
 
@@ -251,6 +251,9 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - Responsive typography and spacing for all screen sizes
 - Keyboard shortcuts implemented: Cmd/Ctrl+K to focus task input, ? to show help
 - Keyboard shortcuts help modal with platform-aware key display (Mac/Windows)
+- Loading states implemented: TaskListSkeleton component with animated pulse effect
+- Loading spinners added to all submit buttons (AddTaskInput, LoginForm, RegisterForm)
+- All loading states include accessibility attributes (aria-busy, aria-label)
 - All 49 API tests passing
 
 ---
