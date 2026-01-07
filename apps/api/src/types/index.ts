@@ -45,3 +45,35 @@ export interface AuthRequest extends Express.Request {
     email: string;
   };
 }
+
+// Task types
+export interface Task {
+  id: string;
+  userId: string;
+  title: string;
+  completed: boolean;
+  dueDate: Date | null;
+  category: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateTaskRequest {
+  title: string;
+}
+
+export interface UpdateTaskRequest {
+  title?: string;
+  completed?: boolean;
+}
+
+export interface TaskResponse {
+  id: string;
+  userId: string;
+  title: string;
+  completed: boolean;
+  dueDate: Date | null;
+  category: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
