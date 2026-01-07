@@ -24,24 +24,24 @@ export function TaskList({
 
   if (loading) {
     return (
-      <div className="text-center py-12 text-gray-500">Loading tasks...</div>
+      <div className="text-center py-8 sm:py-12 text-sm sm:text-base text-gray-500">Loading tasks...</div>
     );
   }
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
+      <div className="text-center py-8 sm:py-12 text-sm sm:text-base text-gray-500">
         No tasks yet. Add one above to get started!
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Active Tasks */}
       {activeTasks.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
             Active ({activeTasks.length})
           </h2>
           <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
@@ -61,13 +61,13 @@ export function TaskList({
       {/* Completed Tasks */}
       {completedTasks.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
               Done ({completedTasks.length})
             </h2>
             <button
               onClick={() => setShowCompleted(!showCompleted)}
-              className="text-sm text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
+              className="text-sm text-blue-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-3 py-2 min-h-[44px] sm:min-h-0 sm:px-2 sm:py-1"
             >
               {showCompleted ? 'Hide' : 'Show'}
             </button>

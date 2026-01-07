@@ -45,12 +45,12 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-md group">
+    <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 hover:bg-gray-50 rounded-md group">
       <input
         type="checkbox"
         checked={task.completed}
         onChange={() => onToggle(task.id)}
-        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+        className="w-5 h-5 sm:w-4 sm:h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer flex-shrink-0"
       />
       <div className="flex-1 min-w-0">
         {isEditing ? (
@@ -61,12 +61,12 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
             onChange={(e) => setEditTitle(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full px-2 py-1 border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2 py-1 text-sm sm:text-base border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         ) : (
           <div
             onDoubleClick={handleDoubleClick}
-            className={`cursor-text select-none ${
+            className={`cursor-text select-none text-sm sm:text-base ${
               task.completed
                 ? 'line-through text-gray-500 transition-all duration-200'
                 : 'text-gray-900'
@@ -81,11 +81,11 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
       </div>
       <button
         onClick={() => onDelete(task.id)}
-        className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity px-2 py-1"
+        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-gray-400 hover:text-red-600 transition-opacity p-2 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 sm:px-2 sm:py-1 flex items-center justify-center"
         aria-label="Delete task"
       >
         <svg
-          className="w-4 h-4"
+          className="w-5 h-5 sm:w-4 sm:h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
