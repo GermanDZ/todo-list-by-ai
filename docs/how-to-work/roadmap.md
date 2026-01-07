@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07 (Sprint 0 completed)
+> Last updated: 2026-01-07 (Sprint 1 completed)
 
 ---
 
@@ -17,7 +17,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 | Priority        | Feature        | Status      |
 | --------------- | -------------- | ----------- |
 | **Must Have**   | Core CRUD      | Not Started |
-| **Must Have**   | Auth System    | Not Started |
+| **Must Have**   | Auth System    | ✅ Completed |
 | **Must Have**   | State Toggle   | Not Started |
 | **Should Have** | Due Dates      | Backlog     |
 | **Should Have** | Categorization | Backlog     |
@@ -109,6 +109,15 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - CORS configured to allow frontend origin
 
 **Output**: Working authentication system with secure token management
+
+**Status**: ✅ **Completed** (2026-01-07)
+
+**Summary**: 
+- All authentication endpoints implemented and tested
+- Frontend auth UI with registration and login forms
+- JWT-based authentication with refresh token rotation
+- Protected routes and automatic token refresh
+- 15 integration tests passing
 
 ---
 
