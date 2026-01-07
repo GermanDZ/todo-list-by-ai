@@ -58,6 +58,47 @@ export function parseDueDate(dueDate: string | null | undefined): Date | null {
 }
 
 /**
+ * Validate category
+ * @param category - Category string to validate
+ * @returns Error message if invalid, null if valid
+ */
+export function validateCategory(category: string | null | undefined): string | null {
+  if (category === null || category === undefined) {
+    return null; // null is valid (optional field)
+  }
+
+  if (typeof category !== 'string') {
+    return 'Category must be a string';
+  }
+
+  // Trim whitespace and check length
+  const trimmed = category.trim();
+  if (trimmed.length === 0) {
+    return null; // Empty string after trim is treated as null (optional field)
+  }
+
+  if (trimmed.length > 50) {
+    return 'Category must be 50 characters or less';
+  }
+
+  return null;
+}
+
+/**
+ * Parse and normalize category, returning trimmed string or null
+ * @param category - Category string to parse
+ * @returns Trimmed string if valid and non-empty, null otherwise
+ */
+export function parseCategory(category: string | null | undefined): string | null {
+  if (!category) {
+    return null;
+  }
+
+  const trimmed = category.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+/**
  * Verify that a task belongs to a user
  * @param taskId - Task ID
  * @param userId - User ID
