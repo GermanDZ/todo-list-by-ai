@@ -5,6 +5,8 @@ import {
   validateTaskTitle,
   validateDueDate,
   parseDueDate,
+  validateCategory,
+  parseCategory,
   verifyTaskOwnership,
 } from '../services/taskService.js';
 import {
@@ -27,7 +29,7 @@ router.use(authenticateToken);
  */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title, dueDate }: CreateTaskRequest = req.body;
+    const { title, dueDate, category }: CreateTaskRequest = req.body;
     const userId = (req as AuthRequest).userId!;
 
     // Validate title
@@ -44,8 +46,17 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    // Parse due date
+    // Validate category if provided
+    const categoryError = validateCategory(category);
+    if (categoryError) {
+      return next(
+        createError(categoryError, 400, ErrorCode.VALIDATION_ERROR, { field: 'category' })
+      );
+    }
+
+    // Parse due date and category
     const parsedDueDate = parseDueDate(dueDate);
+    const parsedCategory = parseCategory(category);
 
     // Create task
     const task = await prisma.task.create({
@@ -53,6 +64,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
         title: title.trim(),
         userId: userId,
         dueDate: parsedDueDate,
+        category: parsedCategory,
       },
     });
 
@@ -126,7 +138,7 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
   try {
     const taskId = req.params.id;
     const userId = (req as AuthRequest).userId!;
-    const { title, completed, dueDate }: UpdateTaskRequest = req.body;
+    const { title, completed, dueDate, category }: UpdateTaskRequest = req.body;
 
     // Verify task ownership
     const existingTask = await verifyTaskOwnership(taskId, userId);
@@ -152,11 +164,22 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
       }
     }
 
+    // Validate category if provided
+    if (category !== undefined) {
+      const categoryError = validateCategory(category);
+      if (categoryError) {
+        return next(
+          createError(categoryError, 400, ErrorCode.VALIDATION_ERROR, { field: 'category' })
+        );
+      }
+    }
+
     // Build update data
     const updateData: {
       title?: string;
       completed?: boolean;
       dueDate?: Date | null;
+      category?: string | null;
     } = {};
 
     if (title !== undefined) {
@@ -167,6 +190,9 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
     }
     if (dueDate !== undefined) {
       updateData.dueDate = parseDueDate(dueDate);
+    }
+    if (category !== undefined) {
+      updateData.category = parseCategory(category);
     }
 
     // Update task
