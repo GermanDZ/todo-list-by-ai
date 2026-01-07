@@ -76,8 +76,15 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
           </div>
         )}
         <div className="flex flex-col gap-1 mt-1">
-          <div className="text-xs text-gray-500">
-            {formatDate(task.createdAt)}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="text-xs text-gray-500">
+              {formatDate(task.createdAt)}
+            </div>
+            {task.category && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                {task.category}
+              </span>
+            )}
           </div>
           {task.dueDate && (
             <div

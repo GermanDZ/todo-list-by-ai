@@ -5,6 +5,7 @@ import { TaskListSkeleton } from './TaskListSkeleton.js';
 import { isOverdue, isToday } from '../utils/dateFormat.js';
 
 type DueDateFilter = 'all' | 'today' | 'overdue' | 'upcoming';
+type CategoryFilter = 'all' | string;
 
 interface TaskListProps {
   tasks: Task[];
@@ -23,6 +24,18 @@ export function TaskList({
 }: TaskListProps) {
   const [showCompleted, setShowCompleted] = useState(true);
   const [dueDateFilter, setDueDateFilter] = useState<DueDateFilter>('all');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+
+  // Get unique categories from tasks
+  const availableCategories = useMemo(() => {
+    const categories = new Set<string>();
+    tasks.forEach((task) => {
+      if (task.category) {
+        categories.add(task.category);
+      }
+    });
+    return Array.from(categories).sort();
+  }, [tasks]);
 
   // Filter tasks by due date
   const filterTasksByDueDate = useMemo(() => {
@@ -54,8 +67,17 @@ export function TaskList({
     });
   }, [tasks, dueDateFilter]);
 
-  const activeTasks = filterTasksByDueDate.filter((task) => !task.completed);
-  const completedTasks = filterTasksByDueDate.filter((task) => task.completed);
+  // Filter tasks by category
+  const filterTasksByCategory = useMemo(() => {
+    if (categoryFilter === 'all') {
+      return filterTasksByDueDate;
+    }
+
+    return filterTasksByDueDate.filter((task) => task.category === categoryFilter);
+  }, [filterTasksByDueDate, categoryFilter]);
+
+  const activeTasks = filterTasksByCategory.filter((task) => !task.completed);
+  const completedTasks = filterTasksByCategory.filter((task) => task.completed);
 
   if (loading) {
     return <TaskListSkeleton />;
@@ -72,21 +94,43 @@ export function TaskList({
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Filter Controls */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
-        <label htmlFor="dueDateFilter" className="text-sm font-medium text-gray-700">
-          Filter by due date:
-        </label>
-        <select
-          id="dueDateFilter"
-          value={dueDateFilter}
-          onChange={(e) => setDueDateFilter(e.target.value as DueDateFilter)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-h-[44px] sm:min-h-0"
-        >
-          <option value="all">All tasks</option>
-          <option value="today">Due today</option>
-          <option value="overdue">Overdue</option>
-          <option value="upcoming">Upcoming</option>
-        </select>
+      <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+          <label htmlFor="dueDateFilter" className="text-sm font-medium text-gray-700">
+            Filter by due date:
+          </label>
+          <select
+            id="dueDateFilter"
+            value={dueDateFilter}
+            onChange={(e) => setDueDateFilter(e.target.value as DueDateFilter)}
+            className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-h-[44px] sm:min-h-0"
+          >
+            <option value="all">All tasks</option>
+            <option value="today">Due today</option>
+            <option value="overdue">Overdue</option>
+            <option value="upcoming">Upcoming</option>
+          </select>
+        </div>
+        {availableCategories.length > 0 && (
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+            <label htmlFor="categoryFilter" className="text-sm font-medium text-gray-700">
+              Filter by category:
+            </label>
+            <select
+              id="categoryFilter"
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
+              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-h-[44px] sm:min-h-0"
+            >
+              <option value="all">All categories</option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       {/* Active Tasks */}
       {activeTasks.length > 0 && (
