@@ -82,23 +82,23 @@ todo-list-by-ai/
 
 ### API (`apps/api/.env`)
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/taskflow` |
-| `JWT_SECRET` | Secret for signing JWT access tokens | `your-secret-key-here` |
-| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | `your-refresh-secret-here` |
-| `JWT_ACCESS_EXPIRES_IN` | Access token expiration | `15m` |
-| `JWT_REFRESH_EXPIRES_IN` | Refresh token expiration | `7d` |
-| `PORT` | API server port | `3001` |
-| `NODE_ENV` | Environment | `development` |
-| `CORS_ORIGIN` | Allowed origin for CORS | `http://localhost:5173` |
+| Variable                 | Description                          | Example                                          |
+| ------------------------ | ------------------------------------ | ------------------------------------------------ |
+| `DATABASE_URL`           | PostgreSQL connection string         | `postgresql://user:pass@localhost:5432/taskflow` |
+| `JWT_SECRET`             | Secret for signing JWT access tokens | `your-secret-key-here`                           |
+| `JWT_REFRESH_SECRET`     | Secret for signing refresh tokens    | `your-refresh-secret-here`                       |
+| `JWT_ACCESS_EXPIRES_IN`  | Access token expiration              | `15m`                                            |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token expiration             | `7d`                                             |
+| `PORT`                   | API server port                      | `3001`                                           |
+| `NODE_ENV`               | Environment                          | `development`                                    |
+| `CORS_ORIGIN`            | Allowed origin for CORS              | `http://localhost:5173`                          |
 
 ### Web (`apps/web/.env`)
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL | `http://localhost:3001` |
-| `VITE_APP_NAME` | Application name | `TaskFlow` |
+| Variable        | Description          | Example                 |
+| --------------- | -------------------- | ----------------------- |
+| `VITE_API_URL`  | Backend API base URL | `http://localhost:3001` |
+| `VITE_APP_NAME` | Application name     | `TaskFlow`              |
 
 ---
 
@@ -148,16 +148,16 @@ See [Deployment](docs/deployment.md) for detailed deployment instructions.
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Features](docs/features.md) | Product features, user stories, and acceptance criteria |
-| [Local Development](docs/local-development.md) | How to set up and run locally |
-| [Testing](docs/testing.md) | Testing strategy and commands |
-| [Deployment](docs/deployment.md) | Local deployment process |
-| [Architecture](docs/how-to-work/architecture.md) | System design and data flows |
-| [Tech Stack](docs/how-to-work/stack.md) | Technology choices |
-| [Roadmap](docs/how-to-work/roadmap.md) | Development roadmap and sprints |
-| [Conventions](docs/how-to-work/conventions.md) | Coding standards |
+| Document                                         | Description                                             |
+| ------------------------------------------------ | ------------------------------------------------------- |
+| [Features](docs/features.md)                     | Product features, user stories, and acceptance criteria |
+| [Local Development](docs/local-development.md)   | How to set up and run locally                           |
+| [Testing](docs/testing.md)                       | Testing strategy and commands                           |
+| [Deployment](docs/deployment.md)                 | Local deployment process                                |
+| [Architecture](docs/how-to-work/architecture.md) | System design and data flows                            |
+| [Tech Stack](docs/how-to-work/stack.md)          | Technology choices                                      |
+| [Roadmap](docs/how-to-work/roadmap.md)           | Development roadmap and sprints                         |
+| [Conventions](docs/how-to-work/conventions.md)   | Coding standards                                        |
 
 ---
 
@@ -185,16 +185,16 @@ docs/how-to-work/agent.md → stack.md → architecture.md → conventions.md �
 
 ### Workflow Documents
 
-| Document | Type | Purpose |
-|----------|------|---------|
-| `architecture.md` | State | Current system design |
-| `stack.md` | State | Current tech choices |
-| `conventions.md` | State | Coding standards |
-| `roadmap.md` | State | Tasks and priorities |
-| `glossary.md` | State | Domain terminology |
-| `decisions.md` | Incremental | Architectural decisions (append-only) |
-| `changelog.md` | Incremental | Release history (append-only) |
-| `retrospectives.md` | Incremental | Lessons learned (append-only) |
+| Document            | Type        | Purpose                               |
+| ------------------- | ----------- | ------------------------------------- |
+| `architecture.md`   | State       | Current system design                 |
+| `stack.md`          | State       | Current tech choices                  |
+| `conventions.md`    | State       | Coding standards                      |
+| `roadmap.md`        | State       | Tasks and priorities                  |
+| `glossary.md`       | State       | Domain terminology                    |
+| `decisions.md`      | Incremental | Architectural decisions (append-only) |
+| `changelog.md`      | Incremental | Release history (append-only)         |
+| `retrospectives.md` | Incremental | Lessons learned (append-only)         |
 
 **State docs** reflect current truth—update them to stay accurate.  
 **Incremental docs** are append-only—never modify past entries.

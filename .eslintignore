@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+_build/
+coverage/
+
+# Generated files
+*.tsbuildinfo
+apps/api/prisma/migrations/
+apps/api/prisma/client/
+
+# Config files
+*.config.js
+*.config.ts
+vite.config.ts
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+

@@ -34,15 +34,16 @@ npm test -- path/to/test/file.test.ts
 
 ### Test Types
 
-| Type | Purpose | Location | Framework |
-|------|---------|----------|-----------|
-| Unit | Test individual functions/components in isolation | `apps/*/src/**/*.test.ts` | Vitest |
-| Integration | Test API endpoints with database | `apps/api/tests/integration/` | Vitest + Supertest |
-| Component | Test React components | `apps/web/src/**/*.test.tsx` | Vitest + React Testing Library |
+| Type        | Purpose                                           | Location                      | Framework                      |
+| ----------- | ------------------------------------------------- | ----------------------------- | ------------------------------ |
+| Unit        | Test individual functions/components in isolation | `apps/*/src/**/*.test.ts`     | Vitest                         |
+| Integration | Test API endpoints with database                  | `apps/api/tests/integration/` | Vitest + Supertest             |
+| Component   | Test React components                             | `apps/web/src/**/*.test.tsx`  | Vitest + React Testing Library |
 
 ### What to Test
 
 **Always Test**:
+
 - Business logic and data transformations
 - API endpoints (request/response, error handling)
 - Authentication flows (login, register, token refresh)
@@ -51,11 +52,13 @@ npm test -- path/to/test/file.test.ts
 - User interactions (form submissions, button clicks)
 
 **Consider Testing**:
+
 - Component rendering
 - API contracts (request/response formats)
 - Database queries (via integration tests)
 
 **Usually Skip**:
+
 - Third-party library internals
 - Trivial getters/setters
 - Implementation details (prefer testing behavior)
@@ -155,11 +158,13 @@ describe('TaskItem', () => {
 Use descriptive names that explain the scenario:
 
 **Good**:
+
 - `should_return_401_when_access_token_is_expired`
 - `should_create_task_when_authenticated_user_provides_valid_title`
 - `should_display_strike_through_when_task_is_completed`
 
 **Bad**:
+
 - `test_auth`
 - `test_task_creation`
 - `test_completion`
@@ -202,11 +207,13 @@ export const createTaskData = (overrides = {}) => ({
 ### Mocking
 
 **API Tests**:
+
 - Mock external services (email, third-party APIs)
 - Use test database (separate from development)
 - Mock JWT verification for unit tests (use real JWT for integration tests)
 
 **Component Tests**:
+
 - Mock API calls (use MSW or fetch mock)
 - Mock authentication context
 - Mock router (if using React Router)
@@ -218,6 +225,7 @@ export const createTaskData = (overrides = {}) => ({
 ### Authentication
 
 **What to Test**:
+
 - [ ] User registration with valid email/password
 - [ ] Registration fails with invalid email format
 - [ ] Registration fails with password < 8 characters
@@ -258,6 +266,7 @@ describe('POST /api/auth/register', () => {
 ### Task CRUD
 
 **What to Test**:
+
 - [ ] Create task with valid title (authenticated)
 - [ ] Create task fails when not authenticated
 - [ ] Create task fails with empty title
@@ -277,7 +286,7 @@ describe('POST /api/tasks', () => {
     // This tests the frontend behavior
     const { getByPlaceholderText } = render(<TaskForm />);
     const input = getByPlaceholderText('Add task...');
-    
+
     fireEvent.change(input, { target: { value: 'New task' } });
     fireEvent.keyDown(input, { key: 'Enter' });
 
@@ -291,6 +300,7 @@ describe('POST /api/tasks', () => {
 ### Task Completion
 
 **What to Test**:
+
 - [ ] Checkbox click toggles completion status
 - [ ] Completed tasks show strike-through styling
 - [ ] Completed tasks move to "Done" section (if implemented)
@@ -320,6 +330,7 @@ open coverage/index.html
 ### Coverage Reports
 
 Coverage reports are generated in `coverage/` directory:
+
 - `coverage/lcov-report/index.html` - HTML report
 - `coverage/lcov.info` - LCOV format (for CI)
 
@@ -328,6 +339,7 @@ Coverage reports are generated in `coverage/` directory:
 ## CI Integration
 
 Tests run automatically on:
+
 - Pull request creation
 - Push to `main` / `develop`
 

@@ -6,16 +6,16 @@ This document defines how AI agents (Claude Code) should interact with this proj
 
 ## Philosophy: Agile with Agents
 
-This workflow adapts the Agile Manifesto for human-agent collaboration. The human defines *what* and *why*; the agent implements *how*—but always in tight feedback loops.
+This workflow adapts the Agile Manifesto for human-agent collaboration. The human defines _what_ and _why_; the agent implements _how_—but always in tight feedback loops.
 
 ### Core Values (adapted)
 
-| We value... | Over... | In practice |
-|-------------|---------|-------------|
-| **Human judgment + agent capability** | Rigid process | The human steers; the agent executes. Either can flag when something feels wrong. |
-| **Working software** | Comprehensive docs | Docs exist to enable working software, not as an end. Ship early, learn, iterate. |
-| **Conversation over specification** | Detailed upfront specs | Short feedback loops. Agent asks questions. Human reviews small PRs. |
-| **Responding to change** | Following the plan | Roadmap is a living document. Pivot when learning demands it. |
+| We value...                           | Over...                | In practice                                                                       |
+| ------------------------------------- | ---------------------- | --------------------------------------------------------------------------------- |
+| **Human judgment + agent capability** | Rigid process          | The human steers; the agent executes. Either can flag when something feels wrong. |
+| **Working software**                  | Comprehensive docs     | Docs exist to enable working software, not as an end. Ship early, learn, iterate. |
+| **Conversation over specification**   | Detailed upfront specs | Short feedback loops. Agent asks questions. Human reviews small PRs.              |
+| **Responding to change**              | Following the plan     | Roadmap is a living document. Pivot when learning demands it.                     |
 
 ### Principles in Action
 
@@ -32,7 +32,7 @@ This workflow adapts the Agile Manifesto for human-agent collaboration. The huma
 3. **Working software is the measure**
    - Every commit passes tests
    - Every PR is deployable
-   - Docs update *after* code works, not before
+   - Docs update _after_ code works, not before
 
 4. **Sustainable pace**
    - Small, reviewable PRs reduce cognitive load
@@ -57,19 +57,22 @@ This workflow adapts the Agile Manifesto for human-agent collaboration. The huma
 ### The Human-Agent Contract
 
 **Human responsibilities:**
-- Define *what* to build and *why* (product direction)
+
+- Define _what_ to build and _why_ (product direction)
 - Make architectural and design decisions (or delegate explicitly)
 - Review PRs—agent work doesn't merge without human approval
 - Update priorities when they change
 
 **Agent responsibilities:**
-- Implement *how* within the defined architecture
+
+- Implement _how_ within the defined architecture
 - Ask clarifying questions before going deep
 - Surface trade-offs and alternatives
 - Keep PRs small and reviewable
 - Maintain test coverage and code quality
 
 **Shared:**
+
 - Either party can propose changes to architecture, workflow, or priorities
 - Decisions are documented, not assumed
 - Trust, but verify (hence PR reviews)
@@ -84,23 +87,23 @@ All workflow documentation lives in `/docs/how-to-work`. Documents are categoriz
 
 These documents grow over time. New entries are added without modifying previous content. They serve as a historical record.
 
-| Document | Purpose |
-|----------|---------|
-| `decisions.md` | Architectural Decision Records (ADRs). Each decision is numbered and dated. Never modify past decisions—add new ones that supersede if needed. |
-| `changelog.md` | Human-readable history of significant changes. Follows Keep a Changelog format. |
-| `retrospectives.md` | Post-sprint or post-milestone reflections. What worked, what didn't, lessons learned. |
+| Document            | Purpose                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `decisions.md`      | Architectural Decision Records (ADRs). Each decision is numbered and dated. Never modify past decisions—add new ones that supersede if needed. |
+| `changelog.md`      | Human-readable history of significant changes. Follows Keep a Changelog format.                                                                |
+| `retrospectives.md` | Post-sprint or post-milestone reflections. What worked, what didn't, lessons learned.                                                          |
 
 ### State Documents (current truth)
 
 These documents reflect the current state of the project. They should be updated to stay accurate. Agents use these as context.
 
-| Document | Purpose |
-|----------|---------|
+| Document          | Purpose                                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------------------------- |
 | `architecture.md` | System design, component relationships, data flow. The source of truth for how the system is structured. |
-| `stack.md` | Technology choices with brief rationale. Versions, frameworks, tools. |
-| `roadmap.md` | Current priorities and upcoming work. Tasks and issues to be implemented. |
-| `conventions.md` | Coding standards, naming conventions, file structure rules. |
-| `glossary.md` | Domain terms and their definitions. |
+| `stack.md`        | Technology choices with brief rationale. Versions, frameworks, tools.                                    |
+| `roadmap.md`      | Current priorities and upcoming work. Tasks and issues to be implemented.                                |
+| `conventions.md`  | Coding standards, naming conventions, file structure rules.                                              |
+| `glossary.md`     | Domain terms and their definitions.                                                                      |
 
 ---
 
@@ -115,6 +118,7 @@ When starting a session, agents should read these documents in order:
 5. `docs/how-to-work/roadmap.md` — understand current priorities
 
 For specific tasks, also consult:
+
 - `docs/how-to-work/decisions.md` — for context on why things are the way they are
 - `docs/how-to-work/glossary.md` — for domain terminology
 
@@ -134,6 +138,7 @@ main
 ### The Small PR Philosophy
 
 Every PR should be:
+
 - **Focused**: Solves exactly one issue or task from `roadmap.md`
 - **Reviewable**: Small enough to review in one sitting (aim for <400 lines changed)
 - **Complete**: All tests pass, no broken functionality
@@ -186,6 +191,7 @@ When asked to implement a feature or fix:
 ### 2. Plan
 
 Before writing code, outline:
+
 - What's the smallest working increment? (Agile: deliver value early)
 - What refactoring is needed first?
 - What tests need to be added or modified?
@@ -225,6 +231,7 @@ Phase 4: Documentation
 ### 4. Review Preparation
 
 Before requesting review:
+
 - Rebase on latest main if needed
 - Ensure all commits are atomic and pass tests
 - Write a clear PR description linking to the issue
@@ -235,21 +242,21 @@ Before requesting review:
 
 ### When to Update State Documents
 
-| Event | Documents to Update |
-|-------|-------------------|
-| New technology added | `stack.md` |
-| Architecture changed | `architecture.md`, possibly `decisions.md` |
-| New conventions established | `conventions.md` |
-| Task completed | `roadmap.md` (mark done), `changelog.md` |
-| New domain term introduced | `glossary.md` |
+| Event                       | Documents to Update                        |
+| --------------------------- | ------------------------------------------ |
+| New technology added        | `stack.md`                                 |
+| Architecture changed        | `architecture.md`, possibly `decisions.md` |
+| New conventions established | `conventions.md`                           |
+| Task completed              | `roadmap.md` (mark done), `changelog.md`   |
+| New domain term introduced  | `glossary.md`                              |
 
 ### When to Add to Incremental Documents
 
-| Event | Document | Action |
-|-------|----------|--------|
-| Significant architectural choice made | `decisions.md` | Add new ADR |
-| Version released or milestone reached | `changelog.md` | Add new entry |
-| Sprint/phase completed | `retrospectives.md` | Add reflection |
+| Event                                 | Document            | Action         |
+| ------------------------------------- | ------------------- | -------------- |
+| Significant architectural choice made | `decisions.md`      | Add new ADR    |
+| Version released or milestone reached | `changelog.md`      | Add new entry  |
+| Sprint/phase completed                | `retrospectives.md` | Add reflection |
 
 ---
 
@@ -289,7 +296,7 @@ Based on the architecture, I'll need to:
 
 Here's my proposed commit sequence:
 1. refactor(middleware): extract base middleware class
-2. refactor(types): add user and session types  
+2. refactor(types): add user and session types
 3. test(auth): add auth middleware tests
 4. feat(auth): implement JWT-based auth middleware
 5. feat(api): add login and logout endpoints
@@ -303,6 +310,7 @@ Does this approach look right before I proceed?
 ## Quick Reference
 
 ### Before Starting Any Task
+
 ```
 1. Read: docs/how-to-work/agent.md → stack.md → architecture.md → roadmap.md
 2. Identify: Which issue/task am I solving?
@@ -312,6 +320,7 @@ Does this approach look right before I proceed?
 ```
 
 ### Before Each Commit
+
 ```
 1. Is this atomic? (one logical change)
 2. Do tests pass? (working software at every step)
@@ -320,6 +329,7 @@ Does this approach look right before I proceed?
 ```
 
 ### Before Requesting Review
+
 ```
 1. All commits pass tests individually?
 2. PR solves exactly one issue?
@@ -329,6 +339,7 @@ Does this approach look right before I proceed?
 ```
 
 ### When Blocked or Uncertain
+
 ```
 1. Ask immediately—don't assume
 2. Surface trade-offs you're seeing

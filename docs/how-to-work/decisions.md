@@ -1,7 +1,7 @@
 # Architectural Decision Records
 
 > **Document Type**: Incremental (append-only)
-> 
+>
 > New decisions are added at the bottom. Past decisions are never modified—add a new decision that supersedes if needed.
 
 ---
@@ -45,6 +45,7 @@ We will use **React 18** with **Vite 5** as the build tool and dev server. We wi
 ### Consequences
 
 **Positive**:
+
 - Fast development experience with Vite's HMR
 - Modern React features (hooks, concurrent rendering)
 - Small bundle size with Vite's optimized builds
@@ -52,6 +53,7 @@ We will use **React 18** with **Vite 5** as the build tool and dev server. We wi
 - Excellent TypeScript support
 
 **Negative**:
+
 - No SSR out of the box (not needed for MVP)
 - Requires separate API server (acceptable for architecture)
 
@@ -74,6 +76,7 @@ We will use **Express 4.x** with **TypeScript** for the backend API. Express pro
 ### Consequences
 
 **Positive**:
+
 - Simple, flexible framework
 - Large ecosystem of middleware
 - Excellent TypeScript support
@@ -81,6 +84,7 @@ We will use **Express 4.x** with **TypeScript** for the backend API. Express pro
 - Well-documented
 
 **Negative**:
+
 - Less opinionated than frameworks like NestJS (requires more setup)
 - Manual middleware configuration (acceptable for MVP scope)
 
@@ -103,6 +107,7 @@ We will use **JWT access tokens** (short-lived, ~15 minutes) stored in memory on
 ### Consequences
 
 **Positive**:
+
 - Stateless authentication (no server-side session storage)
 - Access tokens can't be stolen via XSS (stored in memory, not localStorage)
 - Refresh tokens can't be accessed via JavaScript (httpOnly cookie)
@@ -110,6 +115,7 @@ We will use **JWT access tokens** (short-lived, ~15 minutes) stored in memory on
 - Works across devices and browsers
 
 **Negative**:
+
 - More complex than simple session-based auth
 - Requires database storage for refresh token rotation tracking
 - Need to handle token refresh flow in frontend
@@ -133,6 +139,7 @@ We will use **Prisma** as the ORM for PostgreSQL. Prisma provides type-safe data
 ### Consequences
 
 **Positive**:
+
 - Type-safe database queries (TypeScript autocomplete)
 - Excellent migration system (Prisma Migrate)
 - Prisma Studio for database browsing
@@ -140,6 +147,7 @@ We will use **Prisma** as the ORM for PostgreSQL. Prisma provides type-safe data
 - Prevents SQL injection (parameterized queries)
 
 **Negative**:
+
 - Learning curve for Prisma schema syntax
 - Less flexible than raw SQL (acceptable for MVP)
 - Requires Prisma Client generation step

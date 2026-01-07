@@ -1,7 +1,7 @@
 # Architecture
 
 > **Document Type**: State (keep current)
-> 
+>
 > Last updated: 2026-01-07
 
 ---
@@ -37,6 +37,7 @@ The application uses JWT-based authentication with refresh token rotation for se
 **Location**: `apps/web/`
 
 **Key Features**:
+
 - React components for UI
 - Vite for build tooling and HMR
 - Tailwind CSS for styling
@@ -44,10 +45,12 @@ The application uses JWT-based authentication with refresh token rotation for se
 - Local state management (React hooks/Context)
 
 **Dependencies**:
+
 - Backend API for all data operations
 - Browser localStorage for client-side caching (optional)
 
 **Key Interfaces**:
+
 - REST API endpoints (via fetch/axios)
 - JWT access token in Authorization header
 - Refresh token via httpOnly cookie
@@ -61,6 +64,7 @@ The application uses JWT-based authentication with refresh token rotation for se
 **Location**: `apps/api/`
 
 **Key Features**:
+
 - Express routes and middleware
 - JWT token generation and validation
 - Password hashing (bcrypt)
@@ -68,10 +72,12 @@ The application uses JWT-based authentication with refresh token rotation for se
 - Database queries via Prisma
 
 **Dependencies**:
+
 - PostgreSQL database
 - Prisma Client for database access
 
 **Key Interfaces**:
+
 - RESTful API endpoints
 - JWT authentication middleware
 - Prisma Client for database operations
@@ -85,11 +91,13 @@ The application uses JWT-based authentication with refresh token rotation for se
 **Location**: PostgreSQL running in Docker container
 
 **Key Features**:
+
 - User accounts and authentication data
 - Tasks and task metadata
 - Refresh tokens (for rotation tracking)
 
 **Schema Management**:
+
 - Prisma schema defines all tables and relationships
 - Migrations managed via Prisma Migrate
 
@@ -166,6 +174,7 @@ sequenceDiagram
 **Where used**: All protected API routes
 
 **How it works**:
+
 1. User logs in → receives JWT access token (short-lived, ~15min) and refresh token (long-lived, ~7 days)
 2. Access token stored in memory (frontend), sent in `Authorization: Bearer <token>` header
 3. Refresh token stored in httpOnly cookie, automatically sent with requests
@@ -173,6 +182,7 @@ sequenceDiagram
 5. Refresh tokens are rotated: each refresh generates a new refresh token and invalidates the old one
 
 **Security Benefits**:
+
 - Access tokens can't be stolen via XSS (stored in memory, not localStorage)
 - Refresh tokens can't be accessed via JavaScript (httpOnly cookie)
 - Token rotation limits impact of token theft
@@ -184,6 +194,7 @@ sequenceDiagram
 **Where used**: Frontend API communication
 
 **How it works**:
+
 - Centralized API client handles all HTTP requests
 - Automatically attaches JWT access token to requests
 - Handles token refresh on 401 responses
@@ -196,6 +207,7 @@ sequenceDiagram
 **Where used**: Task creation, updates, deletion
 
 **How it works**:
+
 1. User action triggers immediate UI update (optimistic)
 2. API request sent in background
 3. On success: confirm UI state
@@ -231,6 +243,7 @@ sequenceDiagram
 ## Database Schema (High-Level)
 
 ### Users Table
+
 - `id` (UUID, primary key)
 - `email` (string, unique)
 - `passwordHash` (string, bcrypt)
@@ -238,6 +251,7 @@ sequenceDiagram
 - `updatedAt` (timestamp)
 
 ### Tasks Table
+
 - `id` (UUID, primary key)
 - `userId` (UUID, foreign key → Users)
 - `title` (string)
@@ -248,6 +262,7 @@ sequenceDiagram
 - `category` (string, nullable) - for future Should-Have feature
 
 ### RefreshTokens Table (for rotation)
+
 - `id` (UUID, primary key)
 - `userId` (UUID, foreign key → Users)
 - `token` (string, hashed)
@@ -259,6 +274,7 @@ sequenceDiagram
 ## Technology Choices Rationale
 
 See `docs/how-to-work/decisions.md` for detailed ADRs on:
+
 - Why React + Vite
 - Why Express API
 - Why JWT with refresh token rotation
@@ -269,16 +285,19 @@ See `docs/how-to-work/decisions.md` for detailed ADRs on:
 ## Future Considerations
 
 ### Scalability
+
 - Current architecture supports single-instance deployment
 - For horizontal scaling: consider Redis for refresh token storage
 - Database connection pooling via Prisma
 
 ### Performance
+
 - API response caching (future enhancement)
 - Frontend code splitting (Vite handles this)
 - Database query optimization (indexes via Prisma)
 
 ### Monitoring
+
 - API health check endpoint: `/api/health`
 - Error logging and tracking (to be implemented)
 - Performance metrics (to be implemented)

@@ -1,9 +1,9 @@
 # Changelog
 
 > **Document Type**: Incremental (append-only)
-> 
+>
 > All notable changes to this project will be documented in this file.
-> 
+>
 > Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ---
@@ -26,7 +26,7 @@
 ### Added
 - New features
 
-### Changed  
+### Changed
 - Changes in existing functionality
 
 ### Deprecated

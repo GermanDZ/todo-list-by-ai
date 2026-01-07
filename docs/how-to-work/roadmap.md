@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Document Type**: State (keep current)
-> 
+>
 > Last updated: 2026-01-07
 
 ---
@@ -14,16 +14,16 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 ## Feature Priorities (MoSCoW)
 
-| Priority | Feature | Status |
-|----------|---------|--------|
-| **Must Have** | Core CRUD | Not Started |
-| **Must Have** | Auth System | Not Started |
-| **Must Have** | State Toggle | Not Started |
-| **Should Have** | Due Dates | Backlog |
-| **Should Have** | Categorization | Backlog |
-| **Should Have** | Persistence | Backlog |
-| **Could Have** | Dark Mode | Backlog |
-| **Could Have** | Search/Filter | Backlog |
+| Priority        | Feature        | Status      |
+| --------------- | -------------- | ----------- |
+| **Must Have**   | Core CRUD      | Not Started |
+| **Must Have**   | Auth System    | Not Started |
+| **Must Have**   | State Toggle   | Not Started |
+| **Should Have** | Due Dates      | Backlog     |
+| **Should Have** | Categorization | Backlog     |
+| **Should Have** | Persistence    | Backlog     |
+| **Could Have**  | Dark Mode      | Backlog     |
+| **Could Have**  | Search/Filter  | Backlog     |
 
 ---
 
@@ -34,6 +34,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 **Goal**: Set up project structure, tooling, and development environment.
 
 **Tasks**:
+
 - [ ] Initialize monorepo structure (`apps/web`, `apps/api`, `packages/shared`)
 - [ ] Set up Docker Compose for local PostgreSQL
 - [ ] Configure Prisma schema and initial migrations
@@ -45,6 +46,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [ ] Document local development setup
 
 **Acceptance Criteria**:
+
 - [ ] Developer can clone repo and run `docker compose up` to start database
 - [ ] Developer can run `npm install` and start both API and web servers
 - [ ] Prisma migrations run successfully
@@ -60,6 +62,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 **Goal**: Users can register, login, logout, and maintain secure sessions.
 
 **Tasks**:
+
 - [ ] Design database schema for Users and RefreshTokens tables
 - [ ] Implement user registration endpoint (`POST /api/auth/register`)
   - [ ] Email validation (format check)
@@ -93,11 +96,13 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [ ] Implement protected route handling (frontend)
 
 **Acceptance Criteria** (from [Features](../features.md)):
+
 - [x] **AC 1**: Users can sign up using email/password
 - [x] **AC 2**: Password must be at least 8 characters and hashed in the database
 - [x] **AC 3**: Validation errors must appear if the email is incorrectly formatted or already exists
 
 **Technical Notes**:
+
 - Use `jsonwebtoken` for JWT generation
 - Use `bcrypt` for password hashing (salt rounds: 10)
 - Refresh tokens stored in database for rotation tracking
@@ -112,6 +117,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 **Goal**: Users can create, view, edit, delete, and toggle completion status of tasks.
 
 **Tasks**:
+
 - [ ] Design database schema for Tasks table
 - [ ] Implement create task endpoint (`POST /api/tasks`)
   - [ ] Validate user authentication (JWT middleware)
@@ -153,6 +159,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
   - [ ] Toggle to show/hide completed tasks
 
 **Acceptance Criteria** (from [Features](../features.md)):
+
 - [x] **AC 1**: "Add Task" input should be visible at the top of the main view
 - [x] **AC 2**: Pressing `Enter` should save the task without refreshing the page
 - [x] **AC 3**: Tasks must display their creation date and any assigned labels
@@ -160,6 +167,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [x] **AC 2** (Completion): Completed tasks should optionally move to a "Done" section at the bottom of the list
 
 **Technical Notes**:
+
 - Optimistic UI updates for better perceived performance
 - Task ownership enforced at API level (users can only access their own tasks)
 - Creation date formatted as "2 hours ago" or "Jan 7, 2026" (human-readable)
@@ -173,6 +181,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 **Goal**: Ensure data persistence across devices, improve UX, and add error handling.
 
 **Tasks**:
+
 - [ ] Verify real-time database syncing (automatic via API)
 - [ ] Implement keyboard shortcuts
   - [ ] Document shortcuts in UI
@@ -198,6 +207,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [ ] Implement basic logging (API requests, errors)
 
 **Acceptance Criteria**:
+
 - [ ] App works seamlessly on desktop and mobile
 - [ ] All errors are handled gracefully with user-friendly messages
 - [ ] Keyboard shortcuts are documented and functional
@@ -214,6 +224,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 #### Due Dates
 
 **Tasks**:
+
 - [ ] Add `dueDate` field to Tasks table (nullable timestamp)
 - [ ] Implement calendar picker UI component
 - [ ] Add due date display in task list
@@ -221,6 +232,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [ ] Add visual indicators for overdue tasks
 
 **Acceptance Criteria**:
+
 - [ ] Users can set a due date when creating/editing a task
 - [ ] Due dates are displayed in task list
 - [ ] Overdue tasks are visually distinct
@@ -228,6 +240,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 #### Categorization
 
 **Tasks**:
+
 - [ ] Add `category` field to Tasks table (nullable string)
 - [ ] Create category management (Work, Personal, custom labels)
 - [ ] Add category selector in task form
@@ -235,6 +248,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [ ] Add category display in task items
 
 **Acceptance Criteria**:
+
 - [ ] Users can assign categories to tasks
 - [ ] Users can filter tasks by category
 - [ ] Default categories (Work, Personal) are available
@@ -247,6 +261,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 #### Dark Mode
 
 **Tasks**:
+
 - [ ] Implement system-aware theme detection
 - [ ] Create dark theme color palette
 - [ ] Add theme toggle in UI
@@ -255,6 +270,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 #### Search/Filter
 
 **Tasks**:
+
 - [ ] Add search input to task list
 - [ ] Implement full-text search (task titles)
 - [ ] Add "Hide Completed" toggle
@@ -264,9 +280,9 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 ## In Progress
 
-| ID | Task | Assignee | Branch | Notes |
-|----|------|----------|--------|-------|
-| | | | | |
+| ID  | Task | Assignee | Branch | Notes |
+| --- | ---- | -------- | ------ | ----- |
+|     |      |          |        |       |
 
 ---
 
@@ -293,11 +309,11 @@ Tasks that are defined but not yet prioritized:
 
 ## Completed
 
-*Move tasks here when done. Include the PR number.*
+_Move tasks here when done. Include the PR number._
 
-| ID | Task | PR | Completed |
-|----|------|----|-----------|
-| | | | |
+| ID  | Task | PR  | Completed |
+| --- | ---- | --- | --------- |
+|     |      |     |           |
 
 ---
 

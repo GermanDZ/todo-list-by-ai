@@ -1,7 +1,7 @@
 # AGENTS.md
 
 > Instructions for AI coding agents working on this project.
-> 
+>
 > This file follows the [AGENTS.md](https://agents.md) open standard and works with Claude Code, Cursor, Copilot, Codex, Jules, Windsurf, and other AI coding tools.
 
 ---
@@ -142,7 +142,7 @@ cd apps/api && npx prisma migrate dev
 - Prefer clarity over cleverness
 - Keep functions small and focused
 - Write self-documenting code
-- Comment *why*, not *what*
+- Comment _why_, not _what_
 
 ### Naming
 

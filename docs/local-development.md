@@ -45,6 +45,7 @@ docker compose -f infra/docker-compose.yml logs -f
 ```
 
 The database will be available at `localhost:5432` with:
+
 - Database: `taskflow`
 - User: `taskflow`
 - Password: `taskflow` (change in `infra/docker-compose.yml` for production)
@@ -87,23 +88,23 @@ cp apps/web/.env.example apps/web/.env
 
 **API (`apps/api/.env`)**:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://taskflow:taskflow@localhost:5432/taskflow` |
-| `JWT_SECRET` | Secret for signing JWT access tokens | Generate with: `openssl rand -base64 32` |
-| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | Generate with: `openssl rand -base64 32` |
-| `JWT_ACCESS_EXPIRES_IN` | Access token expiration time | `15m` |
-| `JWT_REFRESH_EXPIRES_IN` | Refresh token expiration time | `7d` |
-| `PORT` | API server port | `3001` |
-| `NODE_ENV` | Environment | `development` |
-| `CORS_ORIGIN` | Allowed origin for CORS | `http://localhost:5173` |
+| Variable                 | Description                          | Example                                                  |
+| ------------------------ | ------------------------------------ | -------------------------------------------------------- |
+| `DATABASE_URL`           | PostgreSQL connection string         | `postgresql://taskflow:taskflow@localhost:5432/taskflow` |
+| `JWT_SECRET`             | Secret for signing JWT access tokens | Generate with: `openssl rand -base64 32`                 |
+| `JWT_REFRESH_SECRET`     | Secret for signing refresh tokens    | Generate with: `openssl rand -base64 32`                 |
+| `JWT_ACCESS_EXPIRES_IN`  | Access token expiration time         | `15m`                                                    |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token expiration time        | `7d`                                                     |
+| `PORT`                   | API server port                      | `3001`                                                   |
+| `NODE_ENV`               | Environment                          | `development`                                            |
+| `CORS_ORIGIN`            | Allowed origin for CORS              | `http://localhost:5173`                                  |
 
 **Web (`apps/web/.env`)**:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL | `http://localhost:3001` |
-| `VITE_APP_NAME` | Application name | `TaskFlow` |
+| Variable        | Description          | Example                 |
+| --------------- | -------------------- | ----------------------- |
+| `VITE_API_URL`  | Backend API base URL | `http://localhost:3001` |
+| `VITE_APP_NAME` | Application name     | `TaskFlow`              |
 
 ### 5. Database Setup
 
@@ -115,6 +116,7 @@ npx prisma migrate dev
 ```
 
 This will:
+
 - Create the database schema
 - Generate Prisma Client
 - Seed the database (if seed script exists)
@@ -206,6 +208,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: API server can't connect to PostgreSQL.
 
 **Solutions**:
+
 1. Verify Docker container is running: `docker compose -f infra/docker-compose.yml ps`
 2. Check `DATABASE_URL` in `apps/api/.env` matches docker-compose.yml settings
 3. Restart the database: `docker compose -f infra/docker-compose.yml restart`
@@ -215,6 +218,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: Browser console shows CORS errors when making API requests.
 
 **Solutions**:
+
 1. Verify `CORS_ORIGIN` in `apps/api/.env` matches your web app URL (e.g., `http://localhost:5173`)
 2. Ensure API server is running and accessible
 3. Check that the web app is using the correct `VITE_API_URL`
@@ -224,6 +228,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: Login works but refresh token isn't stored in browser.
 
 **Solutions**:
+
 1. Verify API is setting cookies with correct flags:
    - `httpOnly: true`
    - `secure: false` (for local development)
@@ -236,15 +241,18 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: Error like "Port 3001 is already in use" or "Port 5173 is already in use".
 
 **Solutions**:
+
 1. Find the process using the port:
+
    ```bash
    # macOS/Linux
    lsof -i :3001
    lsof -i :5173
-   
+
    # Kill the process
    kill -9 <PID>
    ```
+
 2. Or change the port in `.env` files and restart servers
 
 ### Problem: Prisma Client not found
@@ -252,6 +260,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: Error "Cannot find module '@prisma/client'".
 
 **Solutions**:
+
 1. Generate Prisma Client: `cd apps/api && npx prisma generate`
 2. Reinstall dependencies: `cd apps/api && npm install`
 
@@ -260,6 +269,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 **Symptoms**: `prisma migrate dev` errors.
 
 **Solutions**:
+
 1. Check database is running: `docker compose -f infra/docker-compose.yml ps`
 2. Verify `DATABASE_URL` is correct
 3. Reset database (see "Reset Local Database" above) if schema is corrupted
@@ -272,6 +282,7 @@ This opens a browser interface at `http://localhost:5555` to view and edit data.
 ### VS Code / Cursor
 
 Recommended extensions:
+
 - **Prisma** (`Prisma.prisma`) - Syntax highlighting for Prisma schema
 - **ESLint** (`dbaeumer.vscode-eslint`) - Linting
 - **Prettier** (`esbenp.prettier-vscode`) - Code formatting

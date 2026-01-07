@@ -8,15 +8,15 @@ assignees: ''
 
 ## Summary
 
-*One sentence describing the feature.*
+_One sentence describing the feature._
 
 ## Problem
 
-*What problem does this solve? Why is it needed?*
+_What problem does this solve? Why is it needed?_
 
 ## Proposed Solution
 
-*How should this work? What's the expected behavior?*
+_How should this work? What's the expected behavior?_
 
 ## Acceptance Criteria
 
@@ -26,9 +26,9 @@ assignees: ''
 
 ## Technical Notes
 
-*Any implementation hints, constraints, or considerations.*
+_Any implementation hints, constraints, or considerations._
 
 ## References
 
-- Related ADR: *ADR-XXX (if applicable)*
-- Related docs: *docs/how-to-work/architecture.md#section (if applicable)*
+- Related ADR: _ADR-XXX (if applicable)_
+- Related docs: _docs/how-to-work/architecture.md#section (if applicable)_

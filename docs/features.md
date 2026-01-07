@@ -23,17 +23,17 @@ The goal for Version 1.0 is to deliver a stable, responsive MVP (Minimum Viable 
 
 ## Feature List (MoSCoW)
 
-| Priority | Feature | Requirement |
-| --- | --- | --- |
-| **Must Have** | **Core CRUD** | Create, view, edit, and delete tasks. |
-| **Must Have** | **Auth System** | User registration, login, and secure session management. |
-| **Must Have** | **State Toggle** | Instant "Complete/Incomplete" status updates. |
-| **Should Have** | **Due Dates** | Calendar integration for setting deadlines. |
+| Priority        | Feature            | Requirement                                                     |
+| --------------- | ------------------ | --------------------------------------------------------------- |
+| **Must Have**   | **Core CRUD**      | Create, view, edit, and delete tasks.                           |
+| **Must Have**   | **Auth System**    | User registration, login, and secure session management.        |
+| **Must Have**   | **State Toggle**   | Instant "Complete/Incomplete" status updates.                   |
+| **Should Have** | **Due Dates**      | Calendar integration for setting deadlines.                     |
 | **Should Have** | **Categorization** | Ability to group tasks by "Work," "Personal," or custom labels. |
-| **Should Have** | **Persistence** | Real-time database syncing across devices. |
-| **Could Have** | **Dark Mode** | System-aware theme switching. |
-| **Could Have** | **Search/Filter** | Quick-find search bar and "Hide Completed" toggle. |
-| **Won't Have** | **Collaboration** | No shared lists or team assignments in v1.0. |
+| **Should Have** | **Persistence**    | Real-time database syncing across devices.                      |
+| **Could Have**  | **Dark Mode**      | System-aware theme switching.                                   |
+| **Could Have**  | **Search/Filter**  | Quick-find search bar and "Hide Completed" toggle.              |
+| **Won't Have**  | **Collaboration**  | No shared lists or team assignments in v1.0.                    |
 
 ---
 
@@ -50,6 +50,7 @@ The goal for Version 1.0 is to deliver a stable, responsive MVP (Minimum Viable 
 - **AC 3:** Validation errors must appear if the email is incorrectly formatted or already exists.
 
 **Technical Notes:**
+
 - Email validation: Standard email format regex
 - Password hashing: bcrypt with salt rounds
 - Error messages: Clear, user-friendly validation feedback
@@ -67,6 +68,7 @@ The goal for Version 1.0 is to deliver a stable, responsive MVP (Minimum Viable 
 - **AC 3:** Tasks must display their creation date and any assigned labels.
 
 **Technical Notes:**
+
 - Form submission: Prevent default, handle via JavaScript
 - Optimistic UI: Show task immediately, sync with server
 - Date display: Human-readable format (e.g., "2 hours ago", "Jan 7, 2026")
@@ -83,6 +85,7 @@ The goal for Version 1.0 is to deliver a stable, responsive MVP (Minimum Viable 
 - **AC 2:** Completed tasks should optionally move to a "Done" section at the bottom of the list.
 
 **Technical Notes:**
+
 - Animation: Smooth CSS transition for strike-through
 - State management: Update task status optimistically
 - UI option: Toggle to show/hide completed tasks
@@ -95,7 +98,7 @@ The app must follow a **Modern SaaS aesthetic**: high whitespace, soft shadows, 
 
 ### UI Guidelines
 
-- **Aesthetic:** Minimalist, similar to *Linear* or *Notion*.
+- **Aesthetic:** Minimalist, similar to _Linear_ or _Notion_.
 - **Typography:** Sans-serif (Inter, SF Pro, or Roboto).
 - **Interactions:** Micro-interactions for task completion (e.g., subtle strike-through animation).
 - **Responsiveness:** Mobile-first approach. The sidebar should collapse into a "hamburger" menu on smaller screens.
@@ -152,4 +155,3 @@ The following features are explicitly **not** included in v1.0:
 - [Architecture](how-to-work/architecture.md) - System design
 - [Roadmap](how-to-work/roadmap.md) - Development sprints
 - [Stack](how-to-work/stack.md) - Technology choices
-

@@ -21,8 +21,9 @@ The goal is simple: **ship working software faster, with less friction, and main
 **The solution**: A documentation structure that serves as persistent context. The agent reads the docs, understands the project, and can start contributing immediately.
 
 **How it works**:
-- Human defines *what* to build and *why* (product direction, architecture decisions)
-- Agent implements *how* (code, tests, refactoring)
+
+- Human defines _what_ to build and _why_ (product direction, architecture decisions)
+- Agent implements _how_ (code, tests, refactoring)
 - Both collaborate through conversation and small, reviewable PRs
 
 This isn't about replacing developers—it's about amplifying them. The human remains in control of all meaningful decisions while delegating implementation details.
@@ -37,10 +38,10 @@ This isn't about replacing developers—it's about amplifying them. The human re
 
 **The two document types**:
 
-| Type | Purpose | Update Pattern |
-|------|---------|----------------|
-| **State docs** | Current truth about the system | Overwrite when things change |
-| **Incremental docs** | Historical record | Append-only, never modify past entries |
+| Type                 | Purpose                        | Update Pattern                         |
+| -------------------- | ------------------------------ | -------------------------------------- |
+| **State docs**       | Current truth about the system | Overwrite when things change           |
+| **Incremental docs** | Historical record              | Append-only, never modify past entries |
 
 State docs answer "what is true now?" Incremental docs answer "how did we get here?"
 
@@ -48,12 +49,12 @@ State docs answer "what is true now?" Incremental docs answer "how did we get he
 
 The Agile Manifesto was written for human teams. This template adapts it for human-agent collaboration:
 
-| Original Value | Adaptation |
-|----------------|------------|
-| Individuals and interactions over processes and tools | Human judgment + agent capability over rigid automation |
-| Working software over comprehensive documentation | Docs enable working software; they're not an end in themselves |
-| Customer collaboration over contract negotiation | Conversation over specification; short feedback loops |
-| Responding to change over following a plan | Roadmap is living; pivot when learning demands it |
+| Original Value                                        | Adaptation                                                     |
+| ----------------------------------------------------- | -------------------------------------------------------------- |
+| Individuals and interactions over processes and tools | Human judgment + agent capability over rigid automation        |
+| Working software over comprehensive documentation     | Docs enable working software; they're not an end in themselves |
+| Customer collaboration over contract negotiation      | Conversation over specification; short feedback loops          |
+| Responding to change over following a plan            | Roadmap is living; pivot when learning demands it              |
 
 **Principles in practice**:
 
@@ -79,12 +80,14 @@ The Agile Manifesto was written for human teams. This template adapts it for hum
 ```
 
 **Why this order matters**:
+
 - Refactoring first means the actual feature commit is smaller and cleaner
 - Tests first means you know when you're done
 - Each commit passes tests, so you can bisect to find bugs
 - Each commit is independently reviewable and revertable
 
 **Why small PRs matter**:
+
 - Faster reviews (reviewers can hold the whole change in their head)
 - Faster feedback (less time waiting for review)
 - Easier debugging (smaller surface area)
@@ -94,11 +97,12 @@ The Agile Manifesto was written for human teams. This template adapts it for hum
 
 **The problem**: Most templates assume a specific technology. When you switch stacks, you lose your workflow.
 
-**The solution**: Separate *how you work* from *what you build with*.
+**The solution**: Separate _how you work_ from _what you build with_.
 
 The `/docs/how-to-work` directory defines process and workflow. It works whether you're building with TypeScript, Python, Ruby, Go, Rust, Java, or anything else. The conventions, architecture, and stack docs are templates you fill in with your specific choices.
 
 This means:
+
 - Teams can share workflow practices across different projects
 - Switching tech stacks doesn't mean reinventing your process
 - The template works for web apps, APIs, CLIs, libraries, or any other software
@@ -109,43 +113,43 @@ This means:
 
 ### Workflow Documents (`docs/how-to-work/`)
 
-| Document | Why It Exists |
-|----------|---------------|
-| `agent.md` | The "how we work" guide. Ensures agents (and new humans) understand the collaboration model, commit strategy, and communication expectations. |
-| `architecture.md` | Enables autonomous navigation. When an agent knows where components live and how they connect, it can make changes without asking for directions. |
-| `stack.md` | Quick reference for technology choices. Prevents agents from suggesting incompatible libraries or patterns. |
-| `conventions.md` | Consistency without constant correction. Agents follow naming, style, and testing conventions automatically. |
-| `roadmap.md` | Single source for "what's next." Agents can pick up tasks without ambiguity about priorities. |
-| `decisions.md` | Explains *why* things are the way they are. Prevents agents (and future humans) from "fixing" things that were intentional. |
-| `changelog.md` | Human-readable history. Useful for releases, debugging, and understanding what changed when. |
-| `glossary.md` | Domain terms defined once. Ensures consistent language across code, docs, and conversation. |
-| `retrospectives.md` | Learning captured. Prevents repeating mistakes and surfaces what's working. |
+| Document            | Why It Exists                                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `agent.md`          | The "how we work" guide. Ensures agents (and new humans) understand the collaboration model, commit strategy, and communication expectations.     |
+| `architecture.md`   | Enables autonomous navigation. When an agent knows where components live and how they connect, it can make changes without asking for directions. |
+| `stack.md`          | Quick reference for technology choices. Prevents agents from suggesting incompatible libraries or patterns.                                       |
+| `conventions.md`    | Consistency without constant correction. Agents follow naming, style, and testing conventions automatically.                                      |
+| `roadmap.md`        | Single source for "what's next." Agents can pick up tasks without ambiguity about priorities.                                                     |
+| `decisions.md`      | Explains _why_ things are the way they are. Prevents agents (and future humans) from "fixing" things that were intentional.                       |
+| `changelog.md`      | Human-readable history. Useful for releases, debugging, and understanding what changed when.                                                      |
+| `glossary.md`       | Domain terms defined once. Ensures consistent language across code, docs, and conversation.                                                       |
+| `retrospectives.md` | Learning captured. Prevents repeating mistakes and surfaces what's working.                                                                       |
 
 ### Project Documents (`docs/`)
 
-| Document | Why It Exists |
-|----------|---------------|
+| Document               | Why It Exists                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `local-development.md` | Onboarding friction is real. A clear guide means anyone (human or agent) can get the project running quickly. |
-| `testing.md` | Testing philosophy and commands in one place. Ensures consistent test coverage and makes CI debugging easier. |
-| `deployment.md` | Deployment should be boring and repeatable. This doc makes it so. |
+| `testing.md`           | Testing philosophy and commands in one place. Ensures consistent test coverage and makes CI debugging easier. |
+| `deployment.md`        | Deployment should be boring and repeatable. This doc makes it so.                                             |
 
 ### Root Files
 
-| File | Why It Exists |
-|------|---------------|
-| `README.md` | First impression and navigation hub. Points to everything else. |
-| `CLAUDE.md` | Quick context for Claude Code. Avoids reading all docs for simple questions while pointing to full docs for implementation work. |
-| `.env.example` | Documents required configuration without exposing secrets. |
-| `.gitignore` | Comprehensive defaults for multiple languages. Less time fighting git. |
-| `LICENSE` | Legal clarity. Placeholder reminds you to choose one. |
+| File           | Why It Exists                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `README.md`    | First impression and navigation hub. Points to everything else.                                                                  |
+| `CLAUDE.md`    | Quick context for Claude Code. Avoids reading all docs for simple questions while pointing to full docs for implementation work. |
+| `.env.example` | Documents required configuration without exposing secrets.                                                                       |
+| `.gitignore`   | Comprehensive defaults for multiple languages. Less time fighting git.                                                           |
+| `LICENSE`      | Legal clarity. Placeholder reminds you to choose one.                                                                            |
 
 ### GitHub Templates (`.github/`)
 
-| File | Why It Exists |
-|------|---------------|
-| `PULL_REQUEST_TEMPLATE.md` | Consistent PR format. Links to issues, includes checklist, makes review easier. |
-| `ISSUE_TEMPLATE/feature_request.md` | Structured feature requests with acceptance criteria. Reduces back-and-forth. |
-| `ISSUE_TEMPLATE/bug_report.md` | Structured bug reports with reproduction steps. Faster debugging. |
+| File                                | Why It Exists                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------- |
+| `PULL_REQUEST_TEMPLATE.md`          | Consistent PR format. Links to issues, includes checklist, makes review easier. |
+| `ISSUE_TEMPLATE/feature_request.md` | Structured feature requests with acceptance criteria. Reduces back-and-forth.   |
+| `ISSUE_TEMPLATE/bug_report.md`      | Structured bug reports with reproduction steps. Faster debugging.               |
 
 ---
 
@@ -156,17 +160,20 @@ This template is a starting point, not a destination. Here's how to extend it:
 ### Adding New Document Types
 
 **When to add a new doc**:
+
 - You're repeatedly explaining the same thing
 - Information exists but is scattered
 - A new concern emerges that doesn't fit existing docs
 
 **How to add**:
+
 1. Decide if it's State or Incremental
 2. Add to appropriate location (`docs/` or `docs/how-to-work/`)
 3. Update `agent.md` if agents should read it
 4. Update `README.md` documentation table
 
 **Example extensions**:
+
 - `docs/api.md` — API documentation for services
 - `docs/how-to-work/security.md` — Security practices and requirements
 - `docs/runbooks/` — Operational runbooks for incidents
@@ -175,16 +182,19 @@ This template is a starting point, not a destination. Here's how to extend it:
 ### Customizing for Team Size
 
 **Solo developer**:
+
 - Simplify PR process (self-review, faster merge)
 - Focus on docs that help your future self and AI agents
 - Retrospectives become personal journals
 
 **Small team (2-5)**:
+
 - Add code owners to enforce review
 - Consider adding `CONTRIBUTING.md` for external contributors
 - Retrospectives become team rituals
 
 **Larger team**:
+
 - Add team-specific conventions
 - Consider splitting `roadmap.md` by team or domain
 - Add ADR (Architecture Decision Record) templates with more formal review process
@@ -193,21 +203,25 @@ This template is a starting point, not a destination. Here's how to extend it:
 ### Customizing for Project Type
 
 **API/Backend**:
+
 - Add `docs/api.md` for endpoint documentation
 - Add `docs/how-to-work/data-model.md` for schema
 - Extend testing.md with API testing patterns
 
 **Frontend/UI**:
+
 - Add `docs/design-system.md` for component library
 - Add `docs/how-to-work/accessibility.md` for a11y requirements
 - Consider Storybook or similar for component documentation
 
 **Library/Package**:
+
 - Add `docs/api-reference.md` for public API
 - Add `docs/migration.md` for version upgrades
 - Focus `README.md` on installation and usage
 
 **Monorepo**:
+
 - Add per-package READMEs
 - Consider `docs/packages/` structure
 - Extend `architecture.md` with package relationships
@@ -215,35 +229,42 @@ This template is a starting point, not a destination. Here's how to extend it:
 ### Integrating with External Tools
 
 **Project Management (Jira, Linear, etc.)**:
+
 - Link `roadmap.md` tasks to external tickets
 - Consider making roadmap.md a view into external system rather than source of truth
 
 **CI/CD**:
+
 - Add `.github/workflows/` templates
 - Document CI/CD in `deployment.md`
 - Consider adding `docs/how-to-work/ci.md` for pipeline conventions
 
 **Monitoring/Observability**:
+
 - Add `docs/observability.md` for logging, metrics, tracing conventions
 - Add runbooks for common alerts
 
 **Feature Flags**:
+
 - Add `docs/feature-flags.md` for flag conventions
 - Document flag lifecycle in `conventions.md`
 
 ### Adding Automation
 
 **Pre-commit hooks**:
+
 - Lint and format on commit
 - Run affected tests
 - Validate commit message format
 
 **PR automation**:
+
 - Auto-label based on files changed
 - Auto-assign reviewers
 - Require linked issues
 
 **Doc generation**:
+
 - Generate API docs from code
 - Generate changelog from commits
 - Validate doc links aren't broken
@@ -254,7 +275,8 @@ This template is a starting point, not a destination. Here's how to extend it:
 
 ### Why Documentation-Driven?
 
-Code is the ultimate source of truth for *what* the system does. But code can't tell you:
+Code is the ultimate source of truth for _what_ the system does. But code can't tell you:
+
 - Why it was built this way
 - What alternatives were considered
 - What the intended behavior is (vs. accidental)
@@ -266,6 +288,7 @@ Documentation fills these gaps. When documentation is designed for both humans a
 ### Why Agile?
 
 Agile isn't about sprints, standups, or story points. It's about:
+
 - Delivering value early and often
 - Embracing change as learning
 - Prioritizing working software
@@ -276,6 +299,7 @@ These principles work regardless of team size, technology, or whether your teamm
 ### Why Small PRs?
 
 The research is clear: smaller changes are:
+
 - Reviewed faster and more thoroughly
 - Less likely to introduce bugs
 - Easier to debug when bugs occur
@@ -286,6 +310,7 @@ The discipline of small PRs also forces clarity of thought. If you can't explain
 ### Why Stack-Agnostic?
 
 Technology choices change. Good process principles don't. By separating workflow from technology, this template:
+
 - Works across your entire portfolio
 - Survives technology migrations
 - Enables knowledge transfer between projects
@@ -295,6 +320,7 @@ Technology choices change. Good process principles don't. By separating workflow
 ## Credits and Inspiration
 
 This template draws from:
+
 - **Agile Manifesto** — Core values and principles
 - **Architectural Decision Records (ADRs)** — Michael Nygard's pattern for documenting decisions
 - **Keep a Changelog** — Changelog format and philosophy
@@ -307,6 +333,7 @@ This template draws from:
 ## Feedback and Evolution
 
 This template is itself subject to the principles it espouses:
+
 - It should evolve based on experience
 - Changes should be small and incremental
 - What works should be kept; what doesn't should be changed

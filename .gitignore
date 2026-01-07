@@ -1,13 +1,7 @@
 # Dependencies
 node_modules/
-vendor/
-.bundle/
-__pycache__/
-*.pyc
-.venv/
-venv/
-target/
-.gradle/
+.pnp
+.pnp.js
 
 # Build outputs
 dist/
@@ -15,19 +9,20 @@ build/
 out/
 .next/
 _build/
-pkg/
-bin/
-*.egg-info/
+*.tsbuildinfo
 
 # Environment files
 .env
 .env.local
 .env.*.local
 .env.production
+.env.test
 
 # IDE
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 *.swp
 *.swo
 *~
@@ -45,6 +40,8 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Test coverage
 coverage/
@@ -53,6 +50,7 @@ htmlcov/
 .coverage
 .pytest_cache/
 .tox/
+*.lcov
 
 # Cache
 .cache/
@@ -60,17 +58,17 @@ htmlcov/
 .eslintcache
 .prettiercache
 *.cache
+.vite/
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 
-# Language-specific
-*.class
-*.jar
-*.war
-*.exe
-*.dll
-*.so
-*.dylib
+# Prisma (migrations should be committed, but not generated client)
+apps/api/node_modules/.prisma/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3

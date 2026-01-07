@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+_build/
+coverage/
+
+# Generated files
+*.tsbuildinfo
+apps/api/prisma/migrations/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# Cache
+.cache/
+.eslintcache
+.prettiercache
+
+# OS
+.DS_Store
+

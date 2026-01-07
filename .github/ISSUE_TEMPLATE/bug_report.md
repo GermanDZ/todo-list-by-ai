@@ -8,15 +8,15 @@ assignees: ''
 
 ## Summary
 
-*One sentence describing the bug.*
+_One sentence describing the bug._
 
 ## Expected Behavior
 
-*What should happen?*
+_What should happen?_
 
 ## Actual Behavior
 
-*What happens instead?*
+_What happens instead?_
 
 ## Steps to Reproduce
 
@@ -26,10 +26,10 @@ assignees: ''
 
 ## Environment
 
-- OS: *e.g., macOS 14.0*
-- Node version: *e.g., 22.x*
-- Browser (if applicable): *e.g., Chrome 120*
+- OS: _e.g., macOS 14.0_
+- Node version: _e.g., 22.x_
+- Browser (if applicable): _e.g., Chrome 120_
 
 ## Additional Context
 
-*Screenshots, logs, or any other relevant information.*
+_Screenshots, logs, or any other relevant information._

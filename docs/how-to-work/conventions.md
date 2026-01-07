@@ -1,7 +1,7 @@
 # Conventions
 
 > **Document Type**: State (keep current)
-> 
+>
 > Last updated: 2026-01-07
 
 ---
@@ -46,23 +46,23 @@ todo-list-by-ai/
 
 ### Files
 
-| Type | Convention | Example |
-|------|------------|---------|
-| React Components | PascalCase | `TaskItem.tsx`, `TaskForm.tsx` |
-| API Routes | camelCase | `authRoutes.ts`, `taskRoutes.ts` |
-| Utilities | camelCase | `formatDate.ts`, `apiClient.ts` |
-| Types/Interfaces | PascalCase | `User.ts`, `Task.ts` |
-| Tests | Match source + `.test.` | `TaskItem.test.tsx`, `authRoutes.test.ts` |
+| Type             | Convention              | Example                                   |
+| ---------------- | ----------------------- | ----------------------------------------- |
+| React Components | PascalCase              | `TaskItem.tsx`, `TaskForm.tsx`            |
+| API Routes       | camelCase               | `authRoutes.ts`, `taskRoutes.ts`          |
+| Utilities        | camelCase               | `formatDate.ts`, `apiClient.ts`           |
+| Types/Interfaces | PascalCase              | `User.ts`, `Task.ts`                      |
+| Tests            | Match source + `.test.` | `TaskItem.test.tsx`, `authRoutes.test.ts` |
 
 ### Code
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Variables | camelCase | `userName`, `taskList` |
-| Functions/Methods | camelCase | `getUserById`, `createTask` |
-| Classes/Types | PascalCase | `UserService`, `TaskModel` |
-| Constants | SCREAMING_SNAKE_CASE | `MAX_RETRIES`, `JWT_SECRET` |
-| Enums | PascalCase | `TaskStatus`, `UserRole` |
+| Type              | Convention           | Example                     |
+| ----------------- | -------------------- | --------------------------- |
+| Variables         | camelCase            | `userName`, `taskList`      |
+| Functions/Methods | camelCase            | `getUserById`, `createTask` |
+| Classes/Types     | PascalCase           | `UserService`, `TaskModel`  |
+| Constants         | SCREAMING_SNAKE_CASE | `MAX_RETRIES`, `JWT_SECRET` |
+| Enums             | PascalCase           | `TaskStatus`, `UserRole`    |
 
 ---
 
@@ -73,7 +73,7 @@ todo-list-by-ai/
 - Prefer clarity over cleverness
 - Keep functions small and focused (single responsibility)
 - Use meaningful names that describe intent
-- Write self-documenting code; add comments for *why*, not *what*
+- Write self-documenting code; add comments for _why_, not _what_
 - Use TypeScript for type safety
 
 ### TypeScript/JavaScript
@@ -154,7 +154,7 @@ export function TaskItem(props: any) {
 router.post('/tasks', authenticate, async (req, res, next) => {
   try {
     const { title } = req.body;
-    
+
     if (!title || title.trim().length === 0) {
       return res.status(400).json({ error: 'Title is required' });
     }
@@ -168,7 +168,7 @@ router.post('/tasks', authenticate, async (req, res, next) => {
 
 // Bad
 router.post('/tasks', (req, res) => {
-  taskService.createTask(req.body.title).then(task => {
+  taskService.createTask(req.body.title).then((task) => {
     res.json(task);
   });
 });
@@ -218,6 +218,7 @@ docs/{description}
 ```
 
 **Examples**:
+
 - `feature/issue-1-user-authentication`
 - `fix/issue-5-task-deletion-bug`
 - `refactor/extract-api-client`
@@ -232,6 +233,7 @@ Types: feat, fix, refactor, test, docs, chore
 ```
 
 **Examples**:
+
 - `feat(auth): add user registration endpoint`
 - `fix(api): handle expired token refresh`
 - `refactor(web): extract task form component`
@@ -257,6 +259,7 @@ Each commit must pass all tests.
 - **Tests**: All tests must pass
 
 **Example**:
+
 ```
 [FEAT] User authentication system (#1)
 
@@ -294,11 +297,13 @@ Closes #1
 Use descriptive names that explain the scenario:
 
 **Good**:
+
 - `should_return_401_when_access_token_is_expired`
 - `should_create_task_when_authenticated_user_provides_valid_title`
 - `should_display_strike_through_when_task_is_completed`
 
 **Bad**:
+
 - `test_auth`
 - `test_task_creation`
 - `test_completion`
@@ -311,7 +316,7 @@ See [Testing](../testing.md) for detailed testing conventions.
 
 ### Code Comments
 
-- Explain *why*, not *what*
+- Explain _why_, not _what_
 - Document non-obvious behavior
 - Use JSDoc for public functions
 
@@ -320,16 +325,13 @@ See [Testing](../testing.md) for detailed testing conventions.
 ```typescript
 /**
  * Creates a new task for the authenticated user.
- * 
+ *
  * @param userId - The ID of the user creating the task
  * @param title - The task title (must be non-empty)
  * @returns The created task with generated ID and timestamps
  * @throws {ValidationError} If title is empty or invalid
  */
-export async function createTask(
-  userId: string,
-  title: string
-): Promise<Task> {
+export async function createTask(userId: string, title: string): Promise<Task> {
   // Implementation
 }
 ```

@@ -81,11 +81,11 @@ services:
       POSTGRES_PASSWORD: taskflow
       POSTGRES_DB: taskflow
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskflow"]
+      test: ['CMD-SHELL', 'pg_isready -U taskflow']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -198,6 +198,7 @@ Open `http://localhost:5173` in your browser.
 **Problem**: Docker container fails to start.
 
 **Solutions**:
+
 1. Check if port 5432 is already in use:
    ```bash
    lsof -i :5432
@@ -217,6 +218,7 @@ Open `http://localhost:5173` in your browser.
 **Problem**: API can't connect to database.
 
 **Solutions**:
+
 1. Verify database is running: `docker compose -f infra/docker-compose.yml ps`
 2. Check `DATABASE_URL` in `apps/api/.env` matches docker-compose.yml settings
 3. Verify network connectivity: `docker compose -f infra/docker-compose.yml exec postgres psql -U taskflow -d taskflow -c "SELECT 1;"`
@@ -226,6 +228,7 @@ Open `http://localhost:5173` in your browser.
 **Problem**: Port 5432, 3001, or 5173 already in use.
 
 **Solutions**:
+
 1. Find process using the port:
    ```bash
    lsof -i :5432
@@ -271,6 +274,7 @@ npx prisma migrate dev
 Production deployment documentation will be added in a future version. For now, TaskFlow is designed for local development only.
 
 When production deployment is implemented, it will include:
+
 - Hosting platform selection (e.g., Railway, Render, Fly.io)
 - Environment variable management
 - Database hosting (managed PostgreSQL)

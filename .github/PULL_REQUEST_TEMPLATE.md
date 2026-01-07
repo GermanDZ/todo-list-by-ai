@@ -1,14 +1,14 @@
 ## Summary
 
-*Brief description of what this PR does.*
+_Brief description of what this PR does._
 
 ## Related Issue
 
-Closes #*issue-number*
+Closes #_issue-number_
 
 ## Changes
 
-*What changed and why? Keep it brief—the commits tell the story.*
+_What changed and why? Keep it brief—the commits tell the story._
 
 ## Checklist
 
@@ -19,4 +19,4 @@ Closes #*issue-number*
 
 ## Notes for Reviewer
 
-*Anything the reviewer should pay special attention to?*
+_Anything the reviewer should pay special attention to?_

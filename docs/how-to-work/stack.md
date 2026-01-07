@@ -1,70 +1,70 @@
 # Technology Stack
 
 > **Document Type**: State (keep current)
-> 
+>
 > Last updated: 2026-01-07
 
 ---
 
 ## Runtime & Language
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Node.js | 20.x (LTS) | Runtime for both API and build tools |
-| TypeScript | 5.x | Primary language for type safety |
+| Technology | Version    | Purpose                              |
+| ---------- | ---------- | ------------------------------------ |
+| Node.js    | 20.x (LTS) | Runtime for both API and build tools |
+| TypeScript | 5.x        | Primary language for type safety     |
 
 ---
 
 ## Frontend
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 18.x | UI library |
-| Vite | 5.x | Build tool and dev server |
-| Tailwind CSS | 3.x | Utility-first CSS framework |
-| React Router | 6.x | Client-side routing (if needed) |
+| Technology   | Version | Purpose                         |
+| ------------ | ------- | ------------------------------- |
+| React        | 18.x    | UI library                      |
+| Vite         | 5.x     | Build tool and dev server       |
+| Tailwind CSS | 3.x     | Utility-first CSS framework     |
+| React Router | 6.x     | Client-side routing (if needed) |
 
 ### Frontend Testing
 
-| Library | Version | Purpose |
-|---------|---------|---------|
-| Vitest | Latest | Test runner |
-| React Testing Library | Latest | Component testing |
-| @testing-library/user-event | Latest | User interaction simulation |
+| Library                     | Version | Purpose                     |
+| --------------------------- | ------- | --------------------------- |
+| Vitest                      | Latest  | Test runner                 |
+| React Testing Library       | Latest  | Component testing           |
+| @testing-library/user-event | Latest  | User interaction simulation |
 
 ---
 
 ## Backend
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Express | 4.x | Web framework |
-| TypeScript | 5.x | Type-safe backend code |
+| Technology | Version | Purpose                |
+| ---------- | ------- | ---------------------- |
+| Express    | 4.x     | Web framework          |
+| TypeScript | 5.x     | Type-safe backend code |
 
 ### Backend Testing
 
-| Library | Version | Purpose |
-|---------|---------|---------|
-| Vitest | Latest | Test runner |
-| Supertest | Latest | HTTP assertion library for API testing |
+| Library   | Version | Purpose                                |
+| --------- | ------- | -------------------------------------- |
+| Vitest    | Latest  | Test runner                            |
+| Supertest | Latest  | HTTP assertion library for API testing |
 
 ---
 
 ## Database
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| PostgreSQL | 16.x | Primary database |
-| Prisma | Latest | ORM and database toolkit |
+| Technology | Version | Purpose                  |
+| ---------- | ------- | ------------------------ |
+| PostgreSQL | 16.x    | Primary database         |
+| Prisma     | Latest  | ORM and database toolkit |
 
 ---
 
 ## Authentication
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| jsonwebtoken | Latest | JWT token generation and verification |
-| bcrypt | Latest | Password hashing |
+| Technology   | Version | Purpose                               |
+| ------------ | ------- | ------------------------------------- |
+| jsonwebtoken | Latest  | JWT token generation and verification |
+| bcrypt       | Latest  | Password hashing                      |
 
 **Auth Strategy**: JWT access tokens (short-lived, stored in memory) + refresh tokens (long-lived, stored in httpOnly cookie). Refresh tokens are rotated on each use.
 
@@ -72,20 +72,20 @@
 
 ## Development Tools
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| ESLint | Latest | Linter |
-| Prettier | Latest | Code formatter |
-| TypeScript | 5.x | Type checking |
+| Tool       | Version | Purpose        |
+| ---------- | ------- | -------------- |
+| ESLint     | Latest  | Linter         |
+| Prettier   | Latest  | Code formatter |
+| TypeScript | 5.x     | Type checking  |
 
 ---
 
 ## Infrastructure
 
-| Service | Purpose | Notes |
-|---------|---------|-------|
-| Docker | Local database containerization | Used for local PostgreSQL via docker-compose |
-| Docker Compose | Multi-container orchestration | Manages local database setup |
+| Service        | Purpose                         | Notes                                        |
+| -------------- | ------------------------------- | -------------------------------------------- |
+| Docker         | Local database containerization | Used for local PostgreSQL via docker-compose |
+| Docker Compose | Multi-container orchestration   | Manages local database setup                 |
 
 ---
 

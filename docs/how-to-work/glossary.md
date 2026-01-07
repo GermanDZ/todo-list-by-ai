@@ -1,7 +1,7 @@
 # Glossary
 
 > **Document Type**: State (keep current)
-> 
+>
 > Last updated: 2026-01-07
 
 Domain terms and their definitions. Keep alphabetically sorted.
@@ -74,7 +74,7 @@ Domain terms and their definitions. Keep alphabetically sorted.
 
 ---
 
-*Add terms in the format:*
+_Add terms in the format:_
 
 ```
 **Term**: Definition. Additional context if needed. See also: Related Term.
