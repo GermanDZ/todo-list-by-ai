@@ -34,3 +34,24 @@ export interface LogoutResponse {
   message: string;
 }
 
+// Task types
+export interface Task {
+  id: string;
+  userId: string;
+  title: string;
+  completed: boolean;
+  dueDate: string | null;
+  category: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTaskRequest {
+  title: string;
+}
+
+export interface UpdateTaskRequest {
+  title?: string;
+  completed?: boolean;
+}
+
