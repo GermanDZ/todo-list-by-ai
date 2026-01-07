@@ -5,6 +5,9 @@ import {
   RefreshResponse,
   LogoutResponse,
   ApiError,
+  Task,
+  CreateTaskRequest,
+  UpdateTaskRequest,
 } from '../types/api.js';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -184,5 +187,54 @@ export async function api<T>(
   options: RequestInit = {}
 ): Promise<T> {
   return apiRequest<T>(endpoint, options);
+}
+
+/**
+ * Create a new task
+ */
+export async function createTask(title: string): Promise<Task> {
+  return apiRequest<Task>('/api/tasks', {
+    method: 'POST',
+    body: JSON.stringify({ title } as CreateTaskRequest),
+  });
+}
+
+/**
+ * Get tasks for the authenticated user
+ */
+export async function getTasks(completed?: boolean): Promise<Task[]> {
+  const queryParam = completed !== undefined ? `?completed=${completed}` : '';
+  return apiRequest<Task[]>(`/api/tasks${queryParam}`);
+}
+
+/**
+ * Update a task
+ */
+export async function updateTask(
+  id: string,
+  data: UpdateTaskRequest
+): Promise<Task> {
+  return apiRequest<Task>(`/api/tasks/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Delete a task
+ */
+export async function deleteTask(id: string): Promise<void> {
+  return apiRequest<void>(`/api/tasks/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Toggle task completion status
+ */
+export async function toggleTask(id: string): Promise<Task> {
+  return apiRequest<Task>(`/api/tasks/${id}/toggle`, {
+    method: 'PATCH',
+  });
 }
 
