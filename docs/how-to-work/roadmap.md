@@ -63,37 +63,37 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Tasks**:
 
-- [ ] Design database schema for Users and RefreshTokens tables
-- [ ] Implement user registration endpoint (`POST /api/auth/register`)
-  - [ ] Email validation (format check)
-  - [ ] Password validation (min 8 characters)
-  - [ ] Password hashing with bcrypt
-  - [ ] Duplicate email check
-  - [ ] Error messages for validation failures
-- [ ] Implement login endpoint (`POST /api/auth/login`)
-  - [ ] Email/password verification
-  - [ ] Generate JWT access token (15min expiry)
-  - [ ] Generate refresh token (7 day expiry)
-  - [ ] Store refresh token in database
-  - [ ] Set refresh token as httpOnly cookie
-- [ ] Implement refresh token endpoint (`POST /api/auth/refresh`)
-  - [ ] Validate refresh token from cookie
-  - [ ] Generate new access token
-  - [ ] Rotate refresh token (invalidate old, create new)
-- [ ] Implement logout endpoint (`POST /api/auth/logout`)
-  - [ ] Invalidate refresh token
-  - [ ] Clear refresh token cookie
-- [ ] Create JWT authentication middleware
-- [ ] Implement frontend registration form
-  - [ ] Email input with validation
-  - [ ] Password input with validation
-  - [ ] Error message display
-- [ ] Implement frontend login form
-- [ ] Implement frontend API client with token management
-  - [ ] Store access token in memory
-  - [ ] Automatically refresh token on 401
-  - [ ] Attach token to requests
-- [ ] Implement protected route handling (frontend)
+- [x] Design database schema for Users and RefreshTokens tables
+- [x] Implement user registration endpoint (`POST /api/auth/register`)
+  - [x] Email validation (format check)
+  - [x] Password validation (min 8 characters)
+  - [x] Password hashing with bcrypt
+  - [x] Duplicate email check
+  - [x] Error messages for validation failures
+- [x] Implement login endpoint (`POST /api/auth/login`)
+  - [x] Email/password verification
+  - [x] Generate JWT access token (15min expiry)
+  - [x] Generate refresh token (7 day expiry)
+  - [x] Store refresh token in database
+  - [x] Set refresh token as httpOnly cookie
+- [x] Implement refresh token endpoint (`POST /api/auth/refresh`)
+  - [x] Validate refresh token from cookie
+  - [x] Generate new access token
+  - [x] Rotate refresh token (invalidate old, create new)
+- [x] Implement logout endpoint (`POST /api/auth/logout`)
+  - [x] Invalidate refresh token
+  - [x] Clear refresh token cookie
+- [x] Create JWT authentication middleware
+- [x] Implement frontend registration form
+  - [x] Email input with validation
+  - [x] Password input with validation
+  - [x] Error message display
+- [x] Implement frontend login form
+- [x] Implement frontend API client with token management
+  - [x] Store access token in memory
+  - [x] Automatically refresh token on 401
+  - [x] Attach token to requests
+- [x] Implement protected route handling (frontend)
 
 **Acceptance Criteria** (from [Features](../features.md)):
 
@@ -290,8 +290,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 1**: Authentication System (see above)
-2. **Sprint 2**: Tasks MVP (see above)
+1. **Sprint 2**: Tasks MVP (see above)
 
 ---
 
@@ -310,9 +309,10 @@ Tasks that are defined but not yet prioritized:
 
 _Move tasks here when done. Include the PR number._
 
-| ID       | Task             | PR      | Completed  |
-| -------- | ---------------- | ------- | ---------- |
-| Sprint 0 | Foundation setup | 6570ca2 | 2026-01-07 |
+| ID       | Task                  | PR      | Completed  |
+| -------- | --------------------- | ------- | ---------- |
+| Sprint 0 | Foundation setup      | 6570ca2 | 2026-01-07 |
+| Sprint 1 | Authentication System | -       | 2026-01-07 |
 
 ---
 
