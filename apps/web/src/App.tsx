@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useRef, useState } from 'react';
-import { AuthPage } from './components/AuthPage.js';
+import { useRef, useState, lazy, Suspense } from 'react';
 import { ProtectedRoute } from './components/ProtectedRoute.js';
+import { LoadingSpinner } from './components/LoadingSpinner.js';
 import { AddTaskInput, AddTaskInputRef } from './components/AddTaskInput.js';
 import { TaskList } from './components/TaskList.js';
 import { ErrorBoundary } from './components/ErrorBoundary.js';
@@ -10,6 +10,9 @@ import { KeyboardShortcuts } from './components/KeyboardShortcuts.js';
 import { useAuth } from './hooks/useAuth.js';
 import { useTasks } from './hooks/useTasks.js';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts.js';
+
+// Lazy load AuthPage to reduce initial bundle size
+const AuthPage = lazy(() => import('./components/AuthPage.js').then(module => ({ default: module.AuthPage })));
 
 function HomePage() {
   const { user, logout } = useAuth();
@@ -115,7 +118,14 @@ function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <Routes>
-          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/auth"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <AuthPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/"
             element={
