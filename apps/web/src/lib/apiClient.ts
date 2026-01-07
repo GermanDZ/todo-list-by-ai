@@ -149,9 +149,14 @@ async function apiRequest<T>(
       let errorCode: string | undefined;
 
       try {
-        const error: ApiError = await response.json();
-        errorMessage = error.error || errorMessage;
-        errorCode = error.code;
+        // For 204 No Content, there's no body to parse
+        if (response.status !== 204) {
+          const error: ApiError = await response.json();
+          errorMessage = error.error || errorMessage;
+          errorCode = error.code;
+        } else {
+          errorMessage = getStatusMessage(response.status);
+        }
       } catch {
         // If JSON parsing fails, use status-based message
         errorMessage = getStatusMessage(response.status);
@@ -162,6 +167,11 @@ async function apiRequest<T>(
       error.status = response.status;
       error.code = errorCode;
       throw error;
+    }
+
+    // For 204 No Content, return void
+    if (response.status === 204) {
+      return undefined as T;
     }
 
     return response.json();
