@@ -8,7 +8,9 @@
 
 ## Project Overview
 
-*One paragraph describing what this project does, who it's for, and its primary purpose.*
+**TaskFlow** is a high-performance, minimalist To-Do web application designed for professionals who need a "no-friction" way to organize their day. The application focuses on speed, keyboard-centric navigation, and a clean aesthetic.
+
+**Tech Stack**: React + Vite (frontend), Express + TypeScript (backend), PostgreSQL + Prisma (database), JWT authentication with refresh token rotation.
 
 ---
 
@@ -17,16 +19,28 @@
 ```bash
 # Clone and enter project
 git clone <repository-url>
-cd <project-name>
+cd todo-list-by-ai
+
+# Start database
+docker compose -f infra/docker-compose.yml up -d
 
 # Install dependencies
-# [Add your command: npm install, pip install -r requirements.txt, etc.]
+npm install
 
-# Start development server
-# [Add your command: npm run dev, python manage.py runserver, etc.]
+# Set up environment variables
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 
-# Run tests
-# [Add your command: npm test, pytest, go test ./..., etc.]
+# Run database migrations
+cd apps/api
+npx prisma migrate dev
+
+# Start development servers (in separate terminals)
+# Terminal 1: API
+cd apps/api && npm run dev
+
+# Terminal 2: Web
+cd apps/web && npm run dev
 ```
 
 ---
@@ -40,6 +54,7 @@ This project uses a documentation-driven workflow. Before implementing:
 3. Read `docs/how-to-work/architecture.md` for system design
 4. Read `docs/how-to-work/conventions.md` for coding standards
 5. Check `docs/how-to-work/roadmap.md` for current tasks
+6. Review `docs/features.md` for product requirements and acceptance criteria
 
 ### Key Principles
 
@@ -56,56 +71,66 @@ This project uses a documentation-driven workflow. Before implementing:
 ### Development
 
 ```bash
-# Install dependencies
-# [Add your command]
+# Install dependencies (from root)
+npm install
 
-# Start development server
-# [Add your command]
+# Start API server
+cd apps/api && npm run dev
 
-# Build for production
-# [Add your command]
+# Start web frontend
+cd apps/web && npm run dev
+
+# Start database
+docker compose -f infra/docker-compose.yml up -d
 ```
 
 ### Testing
 
 ```bash
-# Run all tests
-# [Add your command]
+# Run all tests (from root)
+npm test
+
+# Run API tests only
+cd apps/api && npm test
+
+# Run web tests only
+cd apps/web && npm test
 
 # Run tests in watch mode
-# [Add your command]
+npm test -- --watch
 
 # Run tests with coverage
-# [Add your command]
-
-# Run a specific test
-# [Add your command]
+npm test -- --coverage
 ```
 
 ### Linting & Formatting
 
 ```bash
-# Lint code
-# [Add your command]
+# Lint code (from root)
+npm run lint
 
-# Format code
-# [Add your command]
+# Format code (from root)
+npm run format
 
-# Type check (if applicable)
-# [Add your command]
+# Type check (from root)
+npm run type-check
 ```
 
-### Database (if applicable)
+### Database
 
 ```bash
 # Run migrations
-# [Add your command]
+cd apps/api && npx prisma migrate dev
 
-# Rollback migrations
-# [Add your command]
+# Generate Prisma Client
+cd apps/api && npx prisma generate
 
-# Seed database
-# [Add your command]
+# Open Prisma Studio
+cd apps/api && npx prisma studio
+
+# Reset database (WARNING: deletes all data)
+docker compose -f infra/docker-compose.yml down -v
+cd apps/api && npx prisma migrate dev
 ```
 
 ---
@@ -121,16 +146,13 @@ This project uses a documentation-driven workflow. Before implementing:
 
 ### Naming
 
-*Define your conventions. Examples:*
-
-- Variables: `camelCase` / `snake_case`
-- Functions: `camelCase` / `snake_case`
+- Variables: `camelCase`
+- Functions: `camelCase`
 - Classes/Types: `PascalCase`
 - Constants: `SCREAMING_SNAKE_CASE`
+- Files: `PascalCase` for components, `camelCase` for utilities
 
 ### Imports
-
-*Define import ordering:*
 
 1. Standard library
 2. External dependencies
@@ -186,34 +208,45 @@ Each commit must pass all tests.
 - Edge cases and error handling
 - Public APIs and interfaces
 - Integration points
+- Authentication flows
+- Task CRUD operations
 
 ### Test Naming
 
 Use descriptive names:
 
 ```
-Good: test_returns_empty_list_when_no_items_match_filter
-Bad:  test_filter_works
+Good: should_return_401_when_access_token_is_expired
+Bad:  test_auth
 ```
+
+See `docs/testing.md` for detailed testing guidelines.
 
 ---
 
 ## Architecture
 
-*Brief overview of system structure. See `docs/how-to-work/architecture.md` for details.*
+Brief overview of system structure. See `docs/how-to-work/architecture.md` for details.
 
 ### Key Directories
 
 ```
-src/            # Source code
-tests/          # Test files
-docs/           # Documentation
-  how-to-work/  # Workflow docs (read these first)
+apps/
+  web/          # React + Vite frontend
+  api/          # Express backend
+packages/
+  shared/      # Shared TypeScript types (optional)
+infra/         # Docker Compose for local DB
+docs/          # Documentation
+  how-to-work/ # Workflow docs (read these first)
 ```
 
 ### Important Patterns
 
-*List key patterns used in this codebase.*
+- **JWT Authentication**: Access tokens in memory, refresh tokens in httpOnly cookies with rotation
+- **Optimistic UI**: Immediate UI updates, sync with server in background
+- **API Client Pattern**: Centralized API client with automatic token management
+- **Stateless API**: No server-side session storage (JWT-based)
 
 ---
 
@@ -223,6 +256,10 @@ docs/           # Documentation
 - Use environment variables for configuration
 - Validate all user input
 - Follow principle of least privilege
+- Hash passwords with bcrypt (salt rounds: 10)
+- Use httpOnly cookies for refresh tokens
+- Rotate refresh tokens on each use
+- Validate JWT signatures and expiration
 
 ---
 
@@ -230,8 +267,10 @@ docs/           # Documentation
 
 1. Check `docs/how-to-work/decisions.md` for past architectural decisions
 2. Check `docs/how-to-work/glossary.md` for domain terminology
-3. Ask for clarification rather than assuming
-4. Surface trade-offs and propose alternatives
+3. Review `docs/features.md` for product requirements and acceptance criteria
+4. Check `docs/how-to-work/roadmap.md` for current tasks and priorities
+5. Ask for clarification rather than assuming
+6. Surface trade-offs and propose alternatives
 
 ---
 
@@ -242,3 +281,6 @@ docs/           # Documentation
 - [Tech Stack](docs/how-to-work/stack.md)
 - [Conventions](docs/how-to-work/conventions.md)
 - [Roadmap](docs/how-to-work/roadmap.md)
+- [Features](docs/features.md)
+- [Local Development](docs/local-development.md)
+- [Testing](docs/testing.md)

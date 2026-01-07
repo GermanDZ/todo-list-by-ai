@@ -1,157 +1,286 @@
-# Deployment
+# Local Deployment
 
-> How to deploy this project to different environments.
+> How to run TaskFlow locally using Docker Compose.
+
+**Note**: This document covers local development deployment only. Production deployment documentation will be added in a future version.
 
 ---
 
-## Environments
+## Overview
 
-| Environment | URL | Branch | Auto-deploy |
-|-------------|-----|--------|-------------|
-| Production | *https://app.example.com* | `main` | *Yes/No* |
-| Staging | *https://staging.example.com* | `develop` | *Yes/No* |
-| Preview | *PR-specific URLs* | *PR branches* | *Yes/No* |
+TaskFlow uses Docker Compose to run PostgreSQL locally. The API and web applications run as Node.js processes (not containerized for local development).
 
 ---
 
 ## Prerequisites
 
-- [ ] Access to deployment platform (e.g., AWS, Vercel, Railway)
-- [ ] Required credentials configured
-- [ ] CI/CD pipeline set up
+- **Docker** and Docker Compose installed
+- **Node.js** 20.x or later
+- All dependencies installed (see [Local Development](local-development.md))
 
 ---
 
-## Deployment Process
+## Local Deployment Process
 
-### Automatic Deployments
-
-*Describe what triggers automatic deployments.*
-
-```
-main branch → Production
-develop branch → Staging
-Pull requests → Preview environments
-```
-
-### Manual Deployments
+### 1. Start the Database
 
 ```bash
-# Deploy to staging
-# [Add your command here]
+# Start PostgreSQL container
+docker compose -f infra/docker-compose.yml up -d
 
-# Deploy to production
-# [Add your command here]
+# Verify it's running
+docker compose -f infra/docker-compose.yml ps
+```
+
+The database will be available at `localhost:5432`.
+
+### 2. Run Database Migrations
+
+```bash
+cd apps/api
+npx prisma migrate dev
+```
+
+This creates the database schema and generates Prisma Client.
+
+### 3. Start the API Server
+
+```bash
+cd apps/api
+npm run dev
+```
+
+The API will be available at `http://localhost:3001`.
+
+### 4. Start the Web Application
+
+In a separate terminal:
+
+```bash
+cd apps/web
+npm run dev
+```
+
+The web app will be available at `http://localhost:5173`.
+
+---
+
+## Docker Compose Services
+
+### PostgreSQL Service
+
+**Configuration** (`infra/docker-compose.yml`):
+
+```yaml
+services:
+  postgres:
+    image: postgres:16
+    container_name: taskflow-db
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow
+      POSTGRES_DB: taskflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+```
+
+**Connection String**:
+
+```
+postgresql://taskflow:taskflow@localhost:5432/taskflow
+```
+
+---
+
+## Managing the Database
+
+### View Logs
+
+```bash
+docker compose -f infra/docker-compose.yml logs -f postgres
+```
+
+### Stop the Database
+
+```bash
+docker compose -f infra/docker-compose.yml stop
+```
+
+### Start the Database
+
+```bash
+docker compose -f infra/docker-compose.yml start
+```
+
+### Restart the Database
+
+```bash
+docker compose -f infra/docker-compose.yml restart postgres
+```
+
+### Remove Database (WARNING: Deletes All Data)
+
+```bash
+# Stop and remove containers
+docker compose -f infra/docker-compose.yml down
+
+# Remove containers and volumes (deletes data)
+docker compose -f infra/docker-compose.yml down -v
 ```
 
 ---
 
 ## Environment Variables
 
-### Production
+### API Environment
 
-| Variable | Description | Where to set |
-|----------|-------------|--------------|
-| `DATABASE_URL` | *Production database* | *Platform secrets* |
-| `API_KEY` | *Production API key* | *Platform secrets* |
+Ensure `apps/api/.env` is configured:
 
-### Staging
-
-*Same as production, but with staging values.*
-
----
-
-## Pre-deployment Checklist
-
-- [ ] All tests pass
-- [ ] Code reviewed and approved
-- [ ] Database migrations ready (if any)
-- [ ] Environment variables configured
-- [ ] Feature flags set (if applicable)
-
----
-
-## Database Migrations
-
-### Running Migrations
-
-```bash
-# Check pending migrations
-# [Add your command here]
-
-# Run migrations
-# [Add your command here]
-
-# Rollback (if needed)
-# [Add your command here]
+```env
+DATABASE_URL=postgresql://taskflow:taskflow@localhost:5432/taskflow
+JWT_SECRET=your-secret-key
+JWT_REFRESH_SECRET=your-refresh-secret
+PORT=3001
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:5173
 ```
 
-### Migration Strategy
+### Web Environment
 
-- Migrations run automatically before deployment: *Yes/No*
-- Zero-downtime migration approach: *Describe*
+Ensure `apps/web/.env` is configured:
+
+```env
+VITE_API_URL=http://localhost:3001
+VITE_APP_NAME=TaskFlow
+```
 
 ---
 
-## Rollback Procedure
+## Health Checks
 
-### Quick Rollback
-
-```bash
-# Rollback to previous deployment
-# [Add your command here]
-```
-
-### Full Rollback (with database)
-
-1. Identify the last known good version
-2. Rollback database migrations (if safe)
-3. Deploy previous version
-4. Verify functionality
-
----
-
-## Monitoring
-
-### Health Checks
-
-- Endpoint: `/health` or `/api/health`
-- Expected response: `200 OK`
-
-### Logs
+### Database Health
 
 ```bash
-# View production logs
-# [Add your command here]
+# Check if database is running
+docker compose -f infra/docker-compose.yml ps
 
-# View staging logs
-# [Add your command here]
+# Test database connection
+docker compose -f infra/docker-compose.yml exec postgres pg_isready -U taskflow
 ```
 
-### Alerts
+### API Health
 
-*Describe alerting setup (e.g., PagerDuty, Slack, email).*
+```bash
+# Check API health endpoint (once implemented)
+curl http://localhost:3001/api/health
+```
+
+### Web Application
+
+Open `http://localhost:5173` in your browser.
 
 ---
 
 ## Troubleshooting
 
-### Deployment Failed
+### Database Won't Start
 
-1. Check CI/CD logs
-2. Verify environment variables
-3. Check for build errors
-4. Review recent changes
+**Problem**: Docker container fails to start.
 
-### App Not Starting
+**Solutions**:
+1. Check if port 5432 is already in use:
+   ```bash
+   lsof -i :5432
+   ```
+2. Check Docker logs:
+   ```bash
+   docker compose -f infra/docker-compose.yml logs postgres
+   ```
+3. Remove and recreate container:
+   ```bash
+   docker compose -f infra/docker-compose.yml down -v
+   docker compose -f infra/docker-compose.yml up -d
+   ```
 
-1. Check application logs
-2. Verify database connectivity
-3. Check environment variables
-4. Verify dependencies installed
+### Database Connection Errors
 
-### Performance Issues Post-Deploy
+**Problem**: API can't connect to database.
 
-1. Check monitoring dashboards
-2. Review recent changes for N+1 queries, memory leaks
-3. Consider rollback if critical
+**Solutions**:
+1. Verify database is running: `docker compose -f infra/docker-compose.yml ps`
+2. Check `DATABASE_URL` in `apps/api/.env` matches docker-compose.yml settings
+3. Verify network connectivity: `docker compose -f infra/docker-compose.yml exec postgres psql -U taskflow -d taskflow -c "SELECT 1;"`
+
+### Port Conflicts
+
+**Problem**: Port 5432, 3001, or 5173 already in use.
+
+**Solutions**:
+1. Find process using the port:
+   ```bash
+   lsof -i :5432
+   lsof -i :3001
+   lsof -i :5173
+   ```
+2. Kill the process or change ports in configuration files
+
+---
+
+## Data Persistence
+
+Database data is persisted in a Docker volume (`postgres_data`). Data survives container restarts but is deleted when you run `docker compose down -v`.
+
+### Backup Database
+
+```bash
+# Create backup
+docker compose -f infra/docker-compose.yml exec postgres pg_dump -U taskflow taskflow > backup.sql
+
+# Restore backup
+docker compose -f infra/docker-compose.yml exec -T postgres psql -U taskflow taskflow < backup.sql
+```
+
+### Reset Database
+
+```bash
+# Stop and remove containers and volumes
+docker compose -f infra/docker-compose.yml down -v
+
+# Start fresh
+docker compose -f infra/docker-compose.yml up -d
+
+# Run migrations
+cd apps/api
+npx prisma migrate dev
+```
+
+---
+
+## Production Deployment
+
+Production deployment documentation will be added in a future version. For now, TaskFlow is designed for local development only.
+
+When production deployment is implemented, it will include:
+- Hosting platform selection (e.g., Railway, Render, Fly.io)
+- Environment variable management
+- Database hosting (managed PostgreSQL)
+- CI/CD pipeline for deployments
+- Monitoring and logging setup
+
+---
+
+## References
+
+- [Local Development](local-development.md) - Detailed setup instructions
+- [Architecture](how-to-work/architecture.md) - System design
+- [Docker Compose Documentation](https://docs.docker.com/compose/)

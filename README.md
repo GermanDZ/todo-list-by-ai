@@ -1,8 +1,8 @@
-# [PROJECT_NAME] (i.e.: "My new AI-guided project")
+# TaskFlow
 
-> One-line description of what this project does.
+> A high-performance, minimalist To-Do web application designed for professionals who need a "no-friction" way to organize their day.
 
-Brief paragraph explaining the project's purpose, who it's for, and what problem it solves.
+TaskFlow focuses on **speed**, **keyboard-centric navigation**, and a **clean aesthetic**. Unlike complex project management tools, TaskFlow delivers a stable, responsive MVP that users can rely on for daily task tracking with cloud persistence.
 
 ---
 
@@ -10,122 +10,154 @@ Brief paragraph explaining the project's purpose, who it's for, and what problem
 
 ### Prerequisites
 
-- Git
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (recommended for AI-assisted development)
-- Your language runtime (Node.js, Python, Ruby, Go, Rust, Java, etc.)
+- **Node.js** 20.x or later (LTS recommended)
+- **Docker** and Docker Compose (for local Postgres database)
+- **Git**
 
-### Install Claude Code
-
-```bash
-# Using Homebrew (macOS/Linux)
-brew install claude-code
-
-# Or using npm (if Node.js is available)
-npm install -g @anthropic-ai/claude-code
-```
-
-### Initialize the Project
+### Quick Start (Local Development)
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/sample-02.git
-cd sample-02
+git clone <repository-url>
+cd todo-list-by-ai
 
-# Start Claude Code
-claude
+# Start the database
+docker compose -f infra/docker-compose.yml up -d
+
+# Install dependencies (from project root)
+npm install
+
+# Set up environment variables
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+# Edit .env files with your local settings
+
+# Run database migrations
+cd apps/api
+npx prisma migrate dev
+
+# Start the development servers (from project root)
+# Terminal 1: API server
+cd apps/api
+npm run dev
+
+# Terminal 2: Web frontend
+cd apps/web
+npm run dev
 ```
 
-On first run, Claude will read `CLAUDE.md` and the workflow docs automatically.
+The API will be available at `http://localhost:3001` and the web app at `http://localhost:5173`.
 
-### First Steps
-
-After cloning, complete the setup tasks in `docs/how-to-work/roadmap.md`:
-
-1. Define your tech stack in `docs/how-to-work/stack.md`
-2. Document your architecture in `docs/how-to-work/architecture.md`
-3. Set up your local environment (see [Local Development](#local-development))
-4. Configure your deployment pipeline (see [Deployment](#deployment))
+See [Local Development](docs/local-development.md) for detailed setup instructions.
 
 ---
 
-## Stack Compatibility
+## Project Structure
 
-This template is **language and framework agnostic**. It works with any stack:
+This project uses a monorepo structure:
 
-- **Languages**: TypeScript, JavaScript, Python, Ruby, Go, Rust, Java, C#, etc.
-- **Frameworks**: React, Rails, Django, Spring, Gin, Actix, Express, etc.
-- **Platforms**: Web, API, CLI, mobile, desktop, embedded
-
-The workflow documentation (`docs/how-to-work/`) defines _how_ you work, not _what_ you build with. Code examples in templates are placeholders—replace them with your stack's equivalents.
+```
+todo-list-by-ai/
+├── apps/
+│   ├── web/              # React + Vite frontend
+│   └── api/               # Express backend API
+├── packages/
+│   └── shared/           # Shared TypeScript types (optional)
+├── infra/
+│   └── docker-compose.yml # Docker Compose for local Postgres
+├── docs/
+│   ├── how-to-work/      # Workflow documentation
+│   ├── features.md       # Product features and requirements
+│   ├── local-development.md
+│   ├── testing.md
+│   └── deployment.md
+├── AGENTS.md             # Quick context for AI agents
+├── LICENSE
+└── README.md             # This file
+```
 
 ---
 
-## Local Development
+## Environment Variables
 
-_Document how to run the project locally._
+### API (`apps/api/.env`)
 
-```bash
-# Install dependencies
-# [Add your command here]
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@localhost:5432/taskflow` |
+| `JWT_SECRET` | Secret for signing JWT access tokens | `your-secret-key-here` |
+| `JWT_REFRESH_SECRET` | Secret for signing refresh tokens | `your-refresh-secret-here` |
+| `JWT_ACCESS_EXPIRES_IN` | Access token expiration | `15m` |
+| `JWT_REFRESH_EXPIRES_IN` | Refresh token expiration | `7d` |
+| `PORT` | API server port | `3001` |
+| `NODE_ENV` | Environment | `development` |
+| `CORS_ORIGIN` | Allowed origin for CORS | `http://localhost:5173` |
 
-# Run the development server
-# [Add your command here]
+### Web (`apps/web/.env`)
 
-# The app will be available at http://localhost:[PORT]
-```
-
-See `docs/local-development.md` for detailed setup instructions.
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API base URL | `http://localhost:3001` |
+| `VITE_APP_NAME` | Application name | `TaskFlow` |
 
 ---
 
 ## Running Tests
 
-_Document how to run the test suite._
-
 ```bash
-# Run all tests
-# [Add your command here]
+# Run all tests (from project root)
+npm test
+
+# Run API tests only
+cd apps/api
+npm test
+
+# Run web tests only
+cd apps/web
+npm test
 
 # Run tests in watch mode
-# [Add your command here]
+npm test -- --watch
 
 # Run tests with coverage
-# [Add your command here]
+npm test -- --coverage
 ```
 
-See `docs/testing.md` for testing conventions and guidelines.
+See [Testing](docs/testing.md) for testing conventions and guidelines.
 
 ---
 
-## Deployment
+## Local Deployment
 
-_Document how to deploy to production._
-
-### Environments
-
-| Environment | URL           | Branch    |
-| ----------- | ------------- | --------- |
-| Production  | _https://..._ | `main`    |
-| Staging     | _https://..._ | `develop` |
-
-### Deploy Process
+This project is configured for local development only. The database runs via Docker Compose.
 
 ```bash
-# [Add your deployment commands here]
+# Start all services
+docker compose -f infra/docker-compose.yml up -d
+
+# Stop all services
+docker compose -f infra/docker-compose.yml down
+
+# View logs
+docker compose -f infra/docker-compose.yml logs -f
 ```
 
-See `docs/deployment.md` for detailed deployment instructions.
+See [Deployment](docs/deployment.md) for detailed deployment instructions.
 
 ---
 
 ## Documentation
 
-| Document                                       | Description                         |
-| ---------------------------------------------- | ----------------------------------- |
-| [Local Development](docs/local-development.md) | How to set up and run locally       |
-| [Testing](docs/testing.md)                     | Testing strategy and commands       |
-| [Deployment](docs/deployment.md)               | Deployment process and environments |
-| _Add more as needed_                           |                                     |
+| Document | Description |
+|----------|-------------|
+| [Features](docs/features.md) | Product features, user stories, and acceptance criteria |
+| [Local Development](docs/local-development.md) | How to set up and run locally |
+| [Testing](docs/testing.md) | Testing strategy and commands |
+| [Deployment](docs/deployment.md) | Local deployment process |
+| [Architecture](docs/how-to-work/architecture.md) | System design and data flows |
+| [Tech Stack](docs/how-to-work/stack.md) | Technology choices |
+| [Roadmap](docs/how-to-work/roadmap.md) | Development roadmap and sprints |
+| [Conventions](docs/how-to-work/conventions.md) | Coding standards |
 
 ---
 
@@ -141,6 +173,7 @@ Before contributing, read:
 2. **[stack.md](docs/how-to-work/stack.md)** — Technology choices
 3. **[architecture.md](docs/how-to-work/architecture.md)** — System design
 4. **[conventions.md](docs/how-to-work/conventions.md)** — Coding standards
+5. **[roadmap.md](docs/how-to-work/roadmap.md)** — Current tasks and priorities
 
 ### For AI Agents (Claude Code)
 
@@ -152,16 +185,16 @@ docs/how-to-work/agent.md → stack.md → architecture.md → conventions.md �
 
 ### Workflow Documents
 
-| Document            | Type        | Purpose                               |
-| ------------------- | ----------- | ------------------------------------- |
-| `architecture.md`   | State       | Current system design                 |
-| `stack.md`          | State       | Current tech choices                  |
-| `conventions.md`    | State       | Coding standards                      |
-| `roadmap.md`        | State       | Tasks and priorities                  |
-| `glossary.md`       | State       | Domain terminology                    |
-| `decisions.md`      | Incremental | Architectural decisions (append-only) |
-| `changelog.md`      | Incremental | Release history (append-only)         |
-| `retrospectives.md` | Incremental | Lessons learned (append-only)         |
+| Document | Type | Purpose |
+|----------|------|---------|
+| `architecture.md` | State | Current system design |
+| `stack.md` | State | Current tech choices |
+| `conventions.md` | State | Coding standards |
+| `roadmap.md` | State | Tasks and priorities |
+| `glossary.md` | State | Domain terminology |
+| `decisions.md` | Incremental | Architectural decisions (append-only) |
+| `changelog.md` | Incremental | Release history (append-only) |
+| `retrospectives.md` | Incremental | Lessons learned (append-only) |
 
 **State docs** reflect current truth—update them to stay accurate.  
 **Incremental docs** are append-only—never modify past entries.
@@ -180,41 +213,12 @@ See [agent.md](docs/how-to-work/agent.md) for the full workflow.
 
 ---
 
-## Project Structure
-
-```
-sample-02/
-├── docs/
-│   ├── how-to-work/          # Workflow documentation
-│   │   ├── agent.md          # AI collaboration guide
-│   │   ├── architecture.md   # System design
-│   │   ├── changelog.md      # Release history
-│   │   ├── conventions.md    # Coding standards
-│   │   ├── decisions.md      # Architectural Decision Records (ADRs). Each decision is numbered and dated. Never modify past decisions—add new ones that supersede if needed.
-│   │   ├── glossary.md       # Domain terms and their definitions.
-│   │   ├── rationale.md      # Rationale for the project
-│   │   ├── retrospectives.md # Post-milestone and periodic reflections.
-│   │   ├── roadmap.md        # Tasks & priorities.
-│   │   └── stack.md          # Tech choices.
-│   ├── local-development.md  # How to set up and run locally.
-│   ├── testing.md            # Testing strategy and commands.
-│   └── deployment.md         # Deployment process and environments.
-├── src/                      # Source code (structure depends on stack).
-├── tests/                    # Test files.
-├── CLAUDE.md                 # AI agent instructions (open standard)
-├── AGENTS.md                 # Quick context for Claude Code, redirects to AGENTS.md.
-├── LICENSE                   # License for the project.
-└── README.md                 # This file.
-```
-
----
-
 ## License
 
-[Choose a license] - See [LICENSE](LICENSE) for details.
+See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Acknowledgments
 
-- _Credit contributors, libraries, or inspirations_
+TaskFlow is designed for professionals who value simplicity and speed in their task management workflow.
