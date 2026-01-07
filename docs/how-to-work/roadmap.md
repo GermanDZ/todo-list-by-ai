@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07 (Loading states completed)
+> Last updated: 2026-01-07 (Due Dates feature completed)
 
 ---
 
@@ -19,7 +19,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 | **Must Have**   | Core CRUD      | ✅ Completed |
 | **Must Have**   | Auth System    | ✅ Completed |
 | **Must Have**   | State Toggle   | ✅ Completed |
-| **Should Have** | Due Dates      | Backlog      |
+| **Should Have** | Due Dates      | ✅ Completed |
 | **Should Have** | Categorization | Backlog      |
 | **Should Have** | Persistence    | Backlog      |
 | **Could Have**  | Dark Mode      | Backlog      |
@@ -270,17 +270,38 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Tasks**:
 
-- [ ] Add `dueDate` field to Tasks table (nullable timestamp)
-- [ ] Implement calendar picker UI component
-- [ ] Add due date display in task list
-- [ ] Add filtering by due date (today, overdue, upcoming)
-- [ ] Add visual indicators for overdue tasks
+- [x] Add `dueDate` field to Tasks table (nullable timestamp) - Already existed in schema
+- [x] Implement calendar picker UI component
+- [x] Add due date display in task list
+- [x] Add filtering by due date (today, overdue, upcoming)
+- [x] Add visual indicators for overdue tasks
 
 **Acceptance Criteria**:
 
-- [ ] Users can set a due date when creating/editing a task
-- [ ] Due dates are displayed in task list
-- [ ] Overdue tasks are visually distinct
+- [x] Users can set a due date when creating/editing a task
+- [x] Due dates are displayed in task list
+- [x] Overdue tasks are visually distinct
+
+**Technical Notes**:
+
+- Used native HTML5 `<input type="date">` for date picker (simple and accessible)
+- Date format: ISO 8601 strings for API, YYYY-MM-DD for date input
+- Client-side filtering implemented (server-side filtering can be added later)
+- Visual indicators: Red for overdue, orange for due today, gray for upcoming
+- Date formatting utilities: formatDueDate, isOverdue, isToday
+
+**Output**: Full due date functionality with filtering and visual indicators
+
+**Status**: ✅ **Completed** (2026-01-07)
+
+**Summary**:
+
+- API endpoints updated to accept and store due dates
+- DatePicker component created with clear button
+- TaskItem displays due dates with color-coded indicators
+- TaskList includes filter dropdown (All, Today, Overdue, Upcoming)
+- Date formatting utilities for relative date display
+- 8 new integration tests added (58 total tests passing)
 
 #### Categorization
 
@@ -335,7 +356,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 4**: Should-Have Features (Due Dates, Categorization) - See Sprint 4+ section above
+1. **Sprint 4**: Categorization feature - See Sprint 4+ section above
 
 ---
 
@@ -343,7 +364,6 @@ Tasks ready to be picked up, in priority order:
 
 Tasks that are defined but not yet prioritized:
 
-- Due Dates (Should-Have)
 - Categorization (Should-Have)
 - Dark Mode (Could-Have)
 - Search/Filter (Could-Have)
@@ -360,6 +380,7 @@ _Move tasks here when done. Include the PR number._
 | Sprint 1 | Authentication System | -       | 2026-01-07 |
 | Sprint 2 | Tasks MVP             | -       | 2026-01-07 |
 | Sprint 3 | Persistence & Polish  | -       | 2026-01-07 |
+| Sprint 4 | Due Dates             | 4bb9799 | 2026-01-07 |
 
 ---
 
