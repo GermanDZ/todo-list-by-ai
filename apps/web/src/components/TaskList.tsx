@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Task } from '../types/api.js';
 import { TaskItem } from './TaskItem.js';
 import { TaskListSkeleton } from './TaskListSkeleton.js';
+import { isOverdue, isToday } from '../utils/dateFormat.js';
+
+type DueDateFilter = 'all' | 'today' | 'overdue' | 'upcoming';
 
 interface TaskListProps {
   tasks: Task[];
@@ -19,9 +22,40 @@ export function TaskList({
   onDelete,
 }: TaskListProps) {
   const [showCompleted, setShowCompleted] = useState(true);
+  const [dueDateFilter, setDueDateFilter] = useState<DueDateFilter>('all');
 
-  const activeTasks = tasks.filter((task) => !task.completed);
-  const completedTasks = tasks.filter((task) => task.completed);
+  // Filter tasks by due date
+  const filterTasksByDueDate = useMemo(() => {
+    if (dueDateFilter === 'all') {
+      return tasks;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return tasks.filter((task) => {
+      if (!task.dueDate) {
+        return false; // Tasks without due dates don't match any filter except 'all'
+      }
+
+      const due = new Date(task.dueDate);
+      due.setHours(0, 0, 0, 0);
+
+      switch (dueDateFilter) {
+        case 'today':
+          return isToday(task.dueDate);
+        case 'overdue':
+          return isOverdue(task.dueDate);
+        case 'upcoming':
+          return !isOverdue(task.dueDate) && !isToday(task.dueDate);
+        default:
+          return true;
+      }
+    });
+  }, [tasks, dueDateFilter]);
+
+  const activeTasks = filterTasksByDueDate.filter((task) => !task.completed);
+  const completedTasks = filterTasksByDueDate.filter((task) => task.completed);
 
   if (loading) {
     return <TaskListSkeleton />;
@@ -37,6 +71,23 @@ export function TaskList({
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Filter Controls */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center">
+        <label htmlFor="dueDateFilter" className="text-sm font-medium text-gray-700">
+          Filter by due date:
+        </label>
+        <select
+          id="dueDateFilter"
+          value={dueDateFilter}
+          onChange={(e) => setDueDateFilter(e.target.value as DueDateFilter)}
+          className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white min-h-[44px] sm:min-h-0"
+        >
+          <option value="all">All tasks</option>
+          <option value="today">Due today</option>
+          <option value="overdue">Overdue</option>
+          <option value="upcoming">Upcoming</option>
+        </select>
+      </div>
       {/* Active Tasks */}
       {activeTasks.length > 0 && (
         <div>
@@ -54,6 +105,13 @@ export function TaskList({
               />
             ))}
           </div>
+        </div>
+      )}
+
+      {/* No tasks match filter */}
+      {activeTasks.length === 0 && completedTasks.length === 0 && (
+        <div className="text-center py-8 sm:py-12 text-sm sm:text-base text-gray-500">
+          No tasks match the selected filter.
         </div>
       )}
 

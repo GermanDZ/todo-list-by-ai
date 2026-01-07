@@ -245,10 +245,13 @@ export async function api<T>(
 /**
  * Create a new task
  */
-export async function createTask(title: string): Promise<Task> {
+export async function createTask(
+  title: string,
+  dueDate?: string | null
+): Promise<Task> {
   return apiRequest<Task>('/api/tasks', {
     method: 'POST',
-    body: JSON.stringify({ title } as CreateTaskRequest),
+    body: JSON.stringify({ title, dueDate } as CreateTaskRequest),
   });
 }
 

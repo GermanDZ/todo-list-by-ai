@@ -1,7 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../services/prismaClient.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
-import { validateTaskTitle, verifyTaskOwnership } from '../services/taskService.js';
+import {
+  validateTaskTitle,
+  validateDueDate,
+  parseDueDate,
+  verifyTaskOwnership,
+} from '../services/taskService.js';
 import {
   CreateTaskRequest,
   UpdateTaskRequest,
@@ -22,7 +27,7 @@ router.use(authenticateToken);
  */
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { title }: CreateTaskRequest = req.body;
+    const { title, dueDate }: CreateTaskRequest = req.body;
     const userId = (req as AuthRequest).userId!;
 
     // Validate title
@@ -31,11 +36,23 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
       return next(createError(titleError, 400, ErrorCode.VALIDATION_ERROR, { field: 'title' }));
     }
 
+    // Validate due date if provided
+    const dueDateError = validateDueDate(dueDate);
+    if (dueDateError) {
+      return next(
+        createError(dueDateError, 400, ErrorCode.VALIDATION_ERROR, { field: 'dueDate' })
+      );
+    }
+
+    // Parse due date
+    const parsedDueDate = parseDueDate(dueDate);
+
     // Create task
     const task = await prisma.task.create({
       data: {
         title: title.trim(),
         userId: userId,
+        dueDate: parsedDueDate,
       },
     });
 
@@ -109,7 +126,7 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
   try {
     const taskId = req.params.id;
     const userId = (req as AuthRequest).userId!;
-    const { title, completed }: UpdateTaskRequest = req.body;
+    const { title, completed, dueDate }: UpdateTaskRequest = req.body;
 
     // Verify task ownership
     const existingTask = await verifyTaskOwnership(taskId, userId);
@@ -125,10 +142,21 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
       }
     }
 
+    // Validate due date if provided
+    if (dueDate !== undefined) {
+      const dueDateError = validateDueDate(dueDate);
+      if (dueDateError) {
+        return next(
+          createError(dueDateError, 400, ErrorCode.VALIDATION_ERROR, { field: 'dueDate' })
+        );
+      }
+    }
+
     // Build update data
     const updateData: {
       title?: string;
       completed?: boolean;
+      dueDate?: Date | null;
     } = {};
 
     if (title !== undefined) {
@@ -136,6 +164,9 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
     }
     if (completed !== undefined) {
       updateData.completed = completed;
+    }
+    if (dueDate !== undefined) {
+      updateData.dueDate = parseDueDate(dueDate);
     }
 
     // Update task

@@ -137,6 +137,41 @@ describe('Tasks API', () => {
       expect(response.status).toBe(201);
       expect(response.body.title).toBe('Test task');
     });
+
+    it('should create a task with a due date', async () => {
+      const dueDate = new Date('2026-12-31T00:00:00.000Z').toISOString();
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with due date', dueDate });
+
+      expect(response.status).toBe(201);
+      expect(response.body.title).toBe('Task with due date');
+      expect(response.body.dueDate).toBeTruthy();
+      expect(new Date(response.body.dueDate).toISOString()).toBe(dueDate);
+    });
+
+    it('should create a task without a due date (null)', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task without due date', dueDate: null });
+
+      expect(response.status).toBe(201);
+      expect(response.body.title).toBe('Task without due date');
+      expect(response.body.dueDate).toBeNull();
+    });
+
+    it('should return 400 when due date is invalid format', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Task with invalid date', dueDate: 'invalid-date' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Due date must be a valid ISO 8601 date string');
+      expect(response.body.details?.field).toBe('dueDate');
+    });
   });
 
   describe('GET /api/tasks', () => {
@@ -307,6 +342,60 @@ describe('Tasks API', () => {
       expect(response.status).toBe(401);
       expect(response.body.error).toBe('Access token required');
     });
+
+    it('should update task due date', async () => {
+      const dueDate = new Date('2026-12-31T00:00:00.000Z').toISOString();
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ dueDate });
+
+      expect(response.status).toBe(200);
+      expect(response.body.dueDate).toBeTruthy();
+      expect(new Date(response.body.dueDate).toISOString()).toBe(dueDate);
+    });
+
+    it('should clear task due date when set to null', async () => {
+      // First set a due date
+      const dueDate = new Date('2026-12-31T00:00:00.000Z').toISOString();
+      await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ dueDate });
+
+      // Then clear it
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ dueDate: null });
+
+      expect(response.status).toBe(200);
+      expect(response.body.dueDate).toBeNull();
+    });
+
+    it('should return 400 when due date is invalid format', async () => {
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ dueDate: 'invalid-date' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Due date must be a valid ISO 8601 date string');
+      expect(response.body.details?.field).toBe('dueDate');
+    });
+
+    it('should update both title and due date', async () => {
+      const dueDate = new Date('2026-12-31T00:00:00.000Z').toISOString();
+      const response = await request(app)
+        .patch(`/api/tasks/${taskId}`)
+        .set('Authorization', `Bearer ${user1AccessToken}`)
+        .send({ title: 'Updated task', dueDate });
+
+      expect(response.status).toBe(200);
+      expect(response.body.title).toBe('Updated task');
+      expect(response.body.dueDate).toBeTruthy();
+      expect(new Date(response.body.dueDate).toISOString()).toBe(dueDate);
+    });
   });
 
   describe('DELETE /api/tasks/:id', () => {
@@ -443,6 +532,54 @@ describe('Tasks API', () => {
 
       expect(response.status).toBe(401);
       expect(response.body.error).toBe('Access token required');
+    });
+  });
+
+  describe('Due date functionality', () => {
+    it('should return due date in task list', async () => {
+      const dueDate = new Date('2026-12-31T00:00:00.000Z').toISOString();
+      await prisma.task.create({
+        data: {
+          title: 'Task with due date',
+          userId: user1Id,
+          completed: false,
+          dueDate: new Date(dueDate),
+        },
+      });
+
+      const response = await request(app)
+        .get('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`);
+
+      expect(response.status).toBe(200);
+      const taskWithDueDate = response.body.find(
+        (task: any) => task.title === 'Task with due date'
+      );
+      expect(taskWithDueDate).toBeTruthy();
+      expect(taskWithDueDate.dueDate).toBeTruthy();
+      expect(new Date(taskWithDueDate.dueDate).toISOString()).toBe(dueDate);
+    });
+
+    it('should return null for tasks without due date', async () => {
+      await prisma.task.create({
+        data: {
+          title: 'Task without due date',
+          userId: user1Id,
+          completed: false,
+          dueDate: null,
+        },
+      });
+
+      const response = await request(app)
+        .get('/api/tasks')
+        .set('Authorization', `Bearer ${user1AccessToken}`);
+
+      expect(response.status).toBe(200);
+      const taskWithoutDueDate = response.body.find(
+        (task: any) => task.title === 'Task without due date'
+      );
+      expect(taskWithoutDueDate).toBeTruthy();
+      expect(taskWithoutDueDate.dueDate).toBeNull();
     });
   });
 });

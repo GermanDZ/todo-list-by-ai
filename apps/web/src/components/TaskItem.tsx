@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Task } from '../types/api.js';
-import { formatDate } from '../utils/dateFormat.js';
+import { formatDate, formatDueDate, isOverdue, isToday } from '../utils/dateFormat.js';
 
 interface TaskItemProps {
   task: Task;
@@ -75,8 +75,23 @@ export function TaskItem({ task, onToggle, onUpdate, onDelete }: TaskItemProps) 
             {task.title}
           </div>
         )}
-        <div className="text-xs text-gray-500 mt-1">
-          {formatDate(task.createdAt)}
+        <div className="flex flex-col gap-1 mt-1">
+          <div className="text-xs text-gray-500">
+            {formatDate(task.createdAt)}
+          </div>
+          {task.dueDate && (
+            <div
+              className={`text-xs font-medium ${
+                isOverdue(task.dueDate)
+                  ? 'text-red-600'
+                  : isToday(task.dueDate)
+                  ? 'text-orange-600'
+                  : 'text-gray-600'
+              }`}
+            >
+              {formatDueDate(task.dueDate)}
+            </div>
+          )}
         </div>
       </div>
       <button
