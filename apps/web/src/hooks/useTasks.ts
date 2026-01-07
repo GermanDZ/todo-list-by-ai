@@ -12,8 +12,8 @@ interface UseTasksReturn {
   tasks: Task[];
   loading: boolean;
   error: string | null;
-  createTask: (title: string, dueDate?: string | null) => Promise<void>;
-  updateTask: (id: string, data: { title?: string; completed?: boolean; dueDate?: string | null }) => Promise<void>;
+  createTask: (title: string, dueDate?: string | null, category?: string | null) => Promise<void>;
+  updateTask: (id: string, data: { title?: string; completed?: boolean; dueDate?: string | null; category?: string | null }) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   toggleTask: (id: string) => Promise<void>;
   refreshTasks: () => Promise<void>;
@@ -42,7 +42,7 @@ export function useTasks(): UseTasksReturn {
     refreshTasks();
   }, [refreshTasks]);
 
-  const handleCreateTask = useCallback(async (title: string, dueDate?: string | null) => {
+  const handleCreateTask = useCallback(async (title: string, dueDate?: string | null, category?: string | null) => {
     // Optimistic update
     const optimisticTask: Task = {
       id: `temp-${Date.now()}`,
@@ -50,7 +50,7 @@ export function useTasks(): UseTasksReturn {
       title,
       completed: false,
       dueDate: dueDate || null,
-      category: null,
+      category: category || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -58,7 +58,7 @@ export function useTasks(): UseTasksReturn {
     setTasks((prev) => [optimisticTask, ...prev]);
 
     try {
-      const newTask = await createTask(title, dueDate);
+      const newTask = await createTask(title, dueDate, category);
       // Replace optimistic task with real one
       setTasks((prev) => prev.map((t) => (t.id === optimisticTask.id ? newTask : t)));
     } catch (err) {
@@ -71,7 +71,7 @@ export function useTasks(): UseTasksReturn {
   }, []);
 
   const handleUpdateTask = useCallback(
-    async (id: string, data: { title?: string; completed?: boolean; dueDate?: string | null }) => {
+    async (id: string, data: { title?: string; completed?: boolean; dueDate?: string | null; category?: string | null }) => {
       // Optimistic update
       const originalTasks = [...tasks];
       setTasks((prev) =>

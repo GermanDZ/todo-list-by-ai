@@ -247,11 +247,12 @@ export async function api<T>(
  */
 export async function createTask(
   title: string,
-  dueDate?: string | null
+  dueDate?: string | null,
+  category?: string | null
 ): Promise<Task> {
   return apiRequest<Task>('/api/tasks', {
     method: 'POST',
-    body: JSON.stringify({ title, dueDate } as CreateTaskRequest),
+    body: JSON.stringify({ title, dueDate, category } as CreateTaskRequest),
   });
 }
 

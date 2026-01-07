@@ -51,11 +51,13 @@ export interface Task {
 export interface CreateTaskRequest {
   title: string;
   dueDate?: string | null;
+  category?: string | null;
 }
 
 export interface UpdateTaskRequest {
   title?: string;
   completed?: boolean;
   dueDate?: string | null;
+  category?: string | null;
 }
 

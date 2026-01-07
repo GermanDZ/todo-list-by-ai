@@ -1,9 +1,10 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react';
 import { LoadingSpinner } from './LoadingSpinner.js';
 import { DatePicker } from './DatePicker.js';
+import { CategorySelector } from './CategorySelector.js';
 
 interface AddTaskInputProps {
-  onCreateTask: (title: string, dueDate?: string | null) => Promise<void>;
+  onCreateTask: (title: string, dueDate?: string | null, category?: string | null) => Promise<void>;
   disabled?: boolean;
 }
 
@@ -13,11 +14,12 @@ export interface AddTaskInputRef {
 
 export const AddTaskInput = forwardRef<AddTaskInputRef, AddTaskInputProps>(
   ({ onCreateTask, disabled = false }, ref) => {
-    const [title, setTitle] = useState('');
-    const [dueDate, setDueDate] = useState<string | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState('');
+  const [dueDate, setDueDate] = useState<string | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
     // Expose focus method via ref
     useImperativeHandle(ref, () => ({
@@ -38,9 +40,10 @@ export const AddTaskInput = forwardRef<AddTaskInputRef, AddTaskInputProps>(
     setError(null);
 
     try {
-      await onCreateTask(trimmedTitle, dueDate);
+      await onCreateTask(trimmedTitle, dueDate, category);
       setTitle('');
       setDueDate(null);
+      setCategory(null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create task';
       setError(errorMessage);
@@ -80,6 +83,12 @@ export const AddTaskInput = forwardRef<AddTaskInputRef, AddTaskInputProps>(
           onChange={setDueDate}
           placeholder="Set due date (optional)"
           disabled={disabled || isSubmitting}
+        />
+        <CategorySelector
+          value={category}
+          onChange={setCategory}
+          disabled={disabled || isSubmitting}
+          placeholder="Select category (optional)"
         />
       </div>
       {error && (
