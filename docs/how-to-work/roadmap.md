@@ -20,7 +20,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 | **Must Have**   | Auth System    | ✅ Completed |
 | **Must Have**   | State Toggle   | ✅ Completed |
 | **Should Have** | Due Dates      | ✅ Completed |
-| **Should Have** | Categorization | Backlog      |
+| **Should Have** | Categorization | ✅ Completed |
 | **Should Have** | Persistence    | Backlog      |
 | **Could Have**  | Dark Mode      | Backlog      |
 | **Could Have**  | Search/Filter  | Backlog      |
@@ -307,18 +307,41 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Tasks**:
 
-- [ ] Add `category` field to Tasks table (nullable string)
-- [ ] Create category management (Work, Personal, custom labels)
-- [ ] Add category selector in task form
-- [ ] Add category filtering in task list
-- [ ] Add category display in task items
+- [x] Add `category` field to Tasks table (nullable string) - Already existed in schema
+- [x] Create category management (Work, Personal, custom labels)
+- [x] Add category selector in task form
+- [x] Add category filtering in task list
+- [x] Add category display in task items
 
 **Acceptance Criteria**:
 
-- [ ] Users can assign categories to tasks
-- [ ] Users can filter tasks by category
-- [ ] Default categories (Work, Personal) are available
-- [ ] Users can create custom categories
+- [x] Users can assign categories to tasks
+- [x] Users can filter tasks by category
+- [x] Default categories (Work, Personal) are available
+- [x] Users can create custom categories
+
+**Technical Notes**:
+
+- Category field already existed in database schema (nullable string)
+- Default categories: "Work" and "Personal" hardcoded in frontend
+- Custom categories: Free-form text input with validation (max 50 characters)
+- Category display: Colored badge/pill in task item
+- Client-side filtering by category (can add server-side later if needed)
+- Category validation: Max 50 characters, trim whitespace, allow null/empty
+
+**Output**: Full categorization functionality with default and custom categories
+
+**Status**: ✅ **Completed** (2026-01-07)
+
+**Summary**:
+
+- API endpoints updated to accept and validate categories
+- CategorySelector component created with default and custom options
+- TaskItem displays category badges
+- TaskList includes category filter dropdown
+- Category validation utilities for frontend and backend
+- Database index added on category field for filtering performance
+- All acceptance criteria met
 
 ---
 
@@ -356,7 +379,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 4**: Categorization feature - See Sprint 4+ section above
+1. **Sprint 4+**: Persistence feature (already working via API, may need additional verification)
 
 ---
 
@@ -364,7 +387,6 @@ Tasks ready to be picked up, in priority order:
 
 Tasks that are defined but not yet prioritized:
 
-- Categorization (Should-Have)
 - Dark Mode (Could-Have)
 - Search/Filter (Could-Have)
 
@@ -381,6 +403,7 @@ _Move tasks here when done. Include the PR number._
 | Sprint 2 | Tasks MVP             | -       | 2026-01-07 |
 | Sprint 3 | Persistence & Polish  | -       | 2026-01-07 |
 | Sprint 4 | Due Dates             | 4bb9799 | 2026-01-07 |
+| Sprint 4 | Categorization        | -       | 2026-01-07 |
 
 ---
 
