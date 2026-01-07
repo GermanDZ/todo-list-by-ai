@@ -58,6 +58,21 @@
 - Integration tests for category create, update, and validation
 - Test coverage for category filtering and edge cases
 
+#### CI/CD Pipeline (Sprint 0)
+
+**Infrastructure:**
+- GitHub Actions CI workflow (`.github/workflows/ci.yml`)
+- Automated test execution for API and web apps
+- Automated linting and type checking
+- PostgreSQL service container for API tests in CI
+- Dependency caching for faster CI runs
+- Runs on pull requests and pushes to main/develop branches
+
+**Testing:**
+- CI environment configured with PostgreSQL 16
+- Prisma migrations run automatically in CI
+- All tests verified to pass in CI environment
+
 ### Changed
 
 - Updated app routing to include authentication pages

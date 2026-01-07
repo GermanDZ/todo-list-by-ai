@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07 (Due Dates feature completed)
+> Last updated: 2026-01-07 (CI/CD completed)
 
 ---
 
@@ -21,7 +21,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 | **Must Have**   | State Toggle   | ✅ Completed |
 | **Should Have** | Due Dates      | ✅ Completed |
 | **Should Have** | Categorization | ✅ Completed |
-| **Should Have** | Persistence    | Backlog      |
+| **Should Have** | Persistence    | ✅ Completed |
 | **Could Have**  | Dark Mode      | Backlog      |
 | **Could Have**  | Search/Filter  | Backlog      |
 
@@ -42,7 +42,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - [x] Configure Vite for React frontend
 - [x] Configure Express API with TypeScript
 - [x] Set up test frameworks (Vitest for both API and web)
-- [ ] Create CI/CD skeleton (GitHub Actions)
+- [x] Create CI/CD skeleton (GitHub Actions)
 - [x] Document local development setup
 
 **Acceptance Criteria**:
@@ -379,7 +379,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 4+**: Persistence feature (already working via API, may need additional verification)
+1. **Could-Have Features**: Dark Mode or Search/Filter (see Backlog below)
 
 ---
 

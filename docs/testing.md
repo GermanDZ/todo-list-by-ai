@@ -343,7 +343,7 @@ Tests run automatically on:
 - Pull request creation
 - Push to `main` / `develop`
 
-See `.github/workflows/ci.yml` for CI configuration (to be created in Sprint 0).
+See `.github/workflows/ci.yml` for CI configuration.
 
 ---
 
