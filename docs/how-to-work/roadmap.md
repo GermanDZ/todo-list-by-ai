@@ -2,7 +2,7 @@
 
 > **Document Type**: State (keep current)
 >
-> Last updated: 2026-01-07
+> Last updated: 2026-01-07 (Sprint 0 completed)
 
 ---
 
@@ -35,23 +35,23 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 **Tasks**:
 
-- [ ] Initialize monorepo structure (`apps/web`, `apps/api`, `packages/shared`)
-- [ ] Set up Docker Compose for local PostgreSQL
-- [ ] Configure Prisma schema and initial migrations
-- [ ] Set up ESLint, Prettier, and TypeScript configs
-- [ ] Configure Vite for React frontend
-- [ ] Configure Express API with TypeScript
-- [ ] Set up test frameworks (Vitest for both API and web)
+- [x] Initialize monorepo structure (`apps/web`, `apps/api`, `packages/shared`)
+- [x] Set up Docker Compose for local PostgreSQL
+- [x] Configure Prisma schema and initial migrations
+- [x] Set up ESLint, Prettier, and TypeScript configs
+- [x] Configure Vite for React frontend
+- [x] Configure Express API with TypeScript
+- [x] Set up test frameworks (Vitest for both API and web)
 - [ ] Create CI/CD skeleton (GitHub Actions)
-- [ ] Document local development setup
+- [x] Document local development setup
 
 **Acceptance Criteria**:
 
-- [ ] Developer can clone repo and run `docker compose up` to start database
-- [ ] Developer can run `npm install` and start both API and web servers
-- [ ] Prisma migrations run successfully
-- [ ] Tests can be run with `npm test`
-- [ ] Code can be linted and formatted
+- [x] Developer can clone repo and run `docker compose up` to start database
+- [x] Developer can run `npm install` and start both API and web servers
+- [x] Prisma migrations run successfully
+- [x] Tests can be run with `npm test`
+- [x] Code can be linted and formatted
 
 **Output**: Working development environment, documented in `docs/local-development.md`
 
@@ -203,7 +203,7 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
   - [ ] Code splitting (Vite handles this)
   - [ ] Lazy loading for routes (if applicable)
   - [ ] Optimize API response times
-- [ ] Add health check endpoint (`GET /api/health`)
+- [x] Add health check endpoint (`GET /api/health`)
 - [ ] Implement basic logging (API requests, errors)
 
 **Acceptance Criteria**:
@@ -290,9 +290,8 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 Tasks ready to be picked up, in priority order:
 
-1. **Sprint 0**: Foundation setup (see above)
-2. **Sprint 1**: Authentication System (see above)
-3. **Sprint 2**: Tasks MVP (see above)
+1. **Sprint 1**: Authentication System (see above)
+2. **Sprint 2**: Tasks MVP (see above)
 
 ---
 
@@ -311,9 +310,9 @@ Tasks that are defined but not yet prioritized:
 
 _Move tasks here when done. Include the PR number._
 
-| ID  | Task | PR  | Completed |
-| --- | ---- | --- | --------- |
-|     |      |     |           |
+| ID       | Task             | PR      | Completed  |
+| -------- | ---------------- | ------- | ---------- |
+| Sprint 0 | Foundation setup | 6570ca2 | 2026-01-07 |
 
 ---
 
