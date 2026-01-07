@@ -206,10 +206,10 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 **Tasks**:
 
 - [ ] Verify real-time database syncing (automatic via API)
-- [ ] Implement keyboard shortcuts
-  - [ ] Document shortcuts in UI
-  - [ ] `Cmd/Ctrl + K` for quick add (optional)
-  - [ ] `Enter` to save task (already done)
+- [x] Implement keyboard shortcuts
+  - [x] Document shortcuts in UI
+  - [x] `Cmd/Ctrl + K` for quick add (optional)
+  - [x] `Enter` to save task (already done)
 - [x] Implement comprehensive error handling
   - [x] API error responses with user-friendly messages
   - [x] Frontend error boundaries
@@ -233,12 +233,12 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 
 - [x] App works seamlessly on desktop and mobile
 - [x] All errors are handled gracefully with user-friendly messages
-- [ ] Keyboard shortcuts are documented and functional
+- [x] Keyboard shortcuts are documented and functional
 - [ ] Performance metrics meet benchmarks (LCP < 2.5s, TTI < 3.5s)
 
 **Output**: Polished, responsive, production-ready MVP
 
-**Status**: 🚧 **In Progress** (Mobile responsiveness completed 2026-01-07)
+**Status**: 🚧 **In Progress** (Keyboard shortcuts completed 2026-01-07)
 
 **Summary**:
 
@@ -249,6 +249,8 @@ Complete **Must-Have** features for TaskFlow v1.0 MVP. See [Features](../feature
 - Mobile-first responsive design implemented across all components
 - Touch-friendly interactions with 44x44px minimum touch targets
 - Responsive typography and spacing for all screen sizes
+- Keyboard shortcuts implemented: Cmd/Ctrl+K to focus task input, ? to show help
+- Keyboard shortcuts help modal with platform-aware key display (Mac/Windows)
 - All 49 API tests passing
 
 ---
