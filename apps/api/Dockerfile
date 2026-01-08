@@ -48,6 +48,10 @@ COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
 
+# Copy startup script
+COPY --chown=nodejs:nodejs start.sh ./start.sh
+RUN chmod +x ./start.sh
+
 # Switch to non-root user
 USER nodejs
 
@@ -58,5 +62,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3001) + '/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Start the server
-CMD ["node", "dist/server.js"]
+# Start the server (runs migrations first, then starts node)
+CMD ["./start.sh"]
