@@ -9,8 +9,8 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 COPY prisma ./prisma/
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (use npm install since package-lock.json may not exist in monorepo subdirectory)
+RUN npm install --production=false
 
 # Build the application
 FROM base AS builder
