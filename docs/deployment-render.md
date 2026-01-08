@@ -488,15 +488,19 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
 **Solutions:**
 
 1. Verify database is attached:
-   ```bash
-   render postgres get taskflow-db
-   render env list --service taskflow-api | grep DATABASE_URL
-   ```
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-api` service
+   - Check "Environment" tab for `DATABASE_URL`
+   - If missing, the database needs to be attached
 
 2. Re-attach database:
-   ```bash
-   render postgres attach taskflow-db --service taskflow-api
-   ```
+   - In the dashboard, go to the database service (`taskflow-db`)
+   - Find the "Connections" or "Linked Services" section
+   - Link it to `taskflow-api` service
+   - Or use the CLI (if supported):
+     ```bash
+     render services  # Interactive menu to manage connections
+     ```
 
 3. Check database status:
    ```bash
