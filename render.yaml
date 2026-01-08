@@ -1,11 +1,13 @@
-services:
+databases:
   # PostgreSQL Database
-  - type: postgres
-    name: taskflow-db
+  - name: taskflow-db
     plan: starter
     databaseName: taskflow
     user: taskflow
+    region: oregon
+    postgresMajorVersion: '16'
 
+services:
   # Backend API Service
   - type: web
     name: taskflow-api
