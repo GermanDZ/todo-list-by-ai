@@ -553,25 +553,33 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
 
 ### Database Migrations Fail
 
-**Symptoms:** Migration errors when running `prisma migrate deploy`.
+**Symptoms:** Migration errors in deployment logs or `DATABASE_URL` not found errors.
 
 **Solutions:**
 
-1. Check database connection:
+1. **Verify DATABASE_URL is set:**
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-api` service
+   - Check "Environment" tab for `DATABASE_URL`
+   - If missing, copy from `taskflow-db` → "Connect" tab → "Internal Database URL"
+
+2. Check database connection:
    ```bash
-   render run "cd apps/api && npx prisma db pull" --service taskflow-api
+   render run "npx prisma db pull" --service taskflow-api
    ```
 
-2. Verify Prisma schema is up to date locally:
+3. Verify Prisma schema is up to date locally:
    ```bash
    cd apps/api
    npx prisma migrate dev
    ```
 
-3. Run migrations manually:
+4. Run migrations manually (if automatic migration failed):
    ```bash
-   render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api
+   render run "npx prisma migrate deploy" --service taskflow-api
    ```
+
+**Note:** Migrations run automatically on each deployment via `start.sh`. If they fail, check the deployment logs for the specific error.
 
 ### Free Tier Spin-Down
 
@@ -598,14 +606,20 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
    ```
 
 2. Verify build commands in `render.yaml` or service settings
+
 3. Test build locally:
    ```bash
    cd apps/api
-   npm ci
+   npm install
    npm run build
    ```
 
 4. Check for missing dependencies or TypeScript errors
+
+5. **Common build issues** (see "Known Issues and Solutions" section for details):
+   - **Prisma + Alpine Linux**: Use `node:20-slim` instead of `node:20-alpine`
+   - **npm ci fails**: Use `npm install` in monorepo subdirectories
+   - **Test files in build**: Exclude `*.test.ts` files in `tsconfig.json`
 
 ### Frontend Docker Build Issues
 
@@ -652,10 +666,12 @@ render deploys create --service taskflow-web
 
 ### Run New Migrations
 
-After deploying backend changes that include database migrations:
+Database migrations run automatically on each deployment via the `start.sh` script. No manual intervention is needed.
+
+If you need to run migrations manually:
 
 ```bash
-render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api
+render run "npx prisma migrate deploy" --service taskflow-api
 ```
 
 ### Update Environment Variables
@@ -704,6 +720,151 @@ render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api
 **Within Free Tier:** $0/month
 
 If you exceed free tier limits or need always-on services, upgrade to a paid plan starting at $7/month per service.
+
+---
+
+## Known Issues and Solutions
+
+This section documents specific issues encountered during deployment and their solutions.
+
+### Prisma + Alpine Linux OpenSSL Error
+
+**Error:**
+```
+PrismaClientInitializationError: Unable to require(`/app/node_modules/.prisma/client/libquery_engine-linux-musl.so.node`).
+Details: Error loading shared library libssl.so.1.1: No such file or directory
+```
+
+**Cause:** Alpine Linux uses musl libc and OpenSSL 3.x, but Prisma's native binaries expect OpenSSL 1.1.x.
+
+**Solution:** Use Debian-based Node image instead of Alpine:
+
+```dockerfile
+# ❌ Don't use Alpine with Prisma
+FROM node:20-alpine
+
+# ✅ Use Debian slim instead
+FROM node:20-slim
+
+# And install OpenSSL
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+```
+
+### npm ci Fails in Monorepo Subdirectory
+
+**Error:**
+```
+npm error The `npm ci` command can only install with an existing package-lock.json
+```
+
+**Cause:** In a monorepo, `package-lock.json` is at the root, not in subdirectories. `npm ci` requires the lockfile in the current directory.
+
+**Solution:** Use `npm install` instead of `npm ci` in Dockerfiles:
+
+```dockerfile
+# ❌ Fails in monorepo subdirectory
+RUN npm ci
+
+# ✅ Works with monorepo structure
+RUN npm install --production=false
+```
+
+### Test Files Included in Production Build
+
+**Error:**
+```
+src/components/TaskItem.test.tsx(193,37): error TS2339: Property 'toBeInTheDocument' does not exist...
+Cannot find module '../test/mocks/taskMocks.js'
+```
+
+**Cause:** TypeScript compiles test files during production build, but test dependencies (vitest, testing-library) aren't available.
+
+**Solution:** Exclude test files in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": { ... },
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/test/**/*"
+  ]
+}
+```
+
+### Database Migrations Not Running
+
+**Symptom:** Application starts but database tables don't exist.
+
+**Solution:** The API uses `start.sh` to automatically run migrations before starting:
+
+```bash
+#!/bin/bash
+echo "Running database migrations..."
+npx prisma migrate deploy
+echo "Database migrations complete."
+echo "Starting API server..."
+node dist/server.js
+```
+
+This ensures migrations run on every deployment automatically.
+
+### Environment Variables Not Taking Effect
+
+**Symptom:** Changes to environment variables in dashboard don't affect the running application.
+
+**Solutions by variable type:**
+
+| Variable | Type | Solution |
+|----------|------|----------|
+| `CORS_ORIGIN` | Runtime | Restart the service |
+| `JWT_SECRET` | Runtime | Restart the service |
+| `DATABASE_URL` | Runtime | Restart the service |
+| `VITE_API_URL` | Build-time | **Rebuild** the service (new deployment) |
+| `VITE_APP_NAME` | Build-time | **Rebuild** the service (new deployment) |
+
+**Important:** Vite environment variables are embedded at build time. Changing them requires a new build/deployment, not just a restart.
+
+### DATABASE_URL Not Linked Automatically
+
+**Symptom:** 
+```
+Error: Environment variable not found: DATABASE_URL.
+```
+
+**Cause:** The `fromDatabase` reference in `render.yaml` may not link correctly on first deploy.
+
+**Solution:** Manually set `DATABASE_URL` in the dashboard:
+1. Go to `taskflow-db` → "Connect" tab
+2. Copy the "Internal Database URL"
+3. Go to `taskflow-api` → "Environment" tab
+4. Add/update `DATABASE_URL` with the copied value
+
+### CORS Errors in Browser
+
+**Symptom:** Browser console shows:
+```
+Access to fetch at 'https://taskflow-api.onrender.com/api/...' has been blocked by CORS policy
+```
+
+**Solution:** Ensure `CORS_ORIGIN` exactly matches the frontend URL:
+- ✅ `https://taskflow-web.onrender.com` (correct)
+- ❌ `https://taskflow-web.onrender.com/` (trailing slash)
+- ❌ `http://taskflow-web.onrender.com` (wrong protocol)
+
+### "Route not found" After Login/Signup
+
+**Symptom:** API returns 404 for authentication endpoints.
+
+**Causes:**
+1. `VITE_API_URL` not set correctly on frontend
+2. Frontend not rebuilt after setting `VITE_API_URL`
+3. API URL missing `/api` prefix (routes are at `/api/auth/login`, etc.)
+
+**Solution:**
+1. Verify `VITE_API_URL` is set to backend URL (e.g., `https://taskflow-api.onrender.com`)
+2. Trigger a new deployment of the frontend (rebuild required)
+3. Ensure frontend code calls `/api/auth/...` endpoints
 
 ---
 
@@ -793,6 +954,6 @@ render services list
 render services  # Interactive menu
 render restart taskflow-api
 
-# Migrations
-render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api
+# Migrations (run automatically on deploy, manual if needed)
+render run "npx prisma migrate deploy" --service taskflow-api
 ```
