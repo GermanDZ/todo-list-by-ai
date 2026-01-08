@@ -54,14 +54,23 @@ Ensure your code is in a Git repository hosted on GitHub, GitLab, or Bitbucket. 
 
 The fastest way to deploy is using the `render.yaml` infrastructure-as-code file:
 
-```bash
-# From project root
-render deploy
-```
+**Note:** Render blueprints (render.yaml) are deployed through the Render dashboard, not via CLI. After the initial setup via dashboard, you can manage services using the CLI.
 
-This will create all services (database, backend, frontend) defined in `render.yaml`. However, you'll still need to:
+### Option 1: Deploy via Dashboard (Recommended for First Time)
 
-1. Set JWT secrets (they're marked as `generateValue: true` but you may want to set them manually)
+1. Push your code (including `render.yaml`) to GitHub/GitLab/Bitbucket
+2. Go to [Render Dashboard](https://dashboard.render.com)
+3. Click "New +" → "Blueprint"
+4. Connect your repository
+5. Render will detect `render.yaml` and create all services
+
+### Option 2: Create Services Manually via CLI
+
+See "Manual Service Creation" section below for CLI commands to create services individually.
+
+After services are created, you'll need to:
+
+1. Set JWT secrets
 2. Set `VITE_API_URL` and `CORS_ORIGIN` after services are deployed
 3. Run database migrations
 
@@ -71,33 +80,43 @@ See the detailed steps below for complete setup.
 
 ## Detailed Deployment Steps
 
-### Step 1: Deploy Infrastructure from render.yaml
+### Step 1: Create Services
 
-From the project root:
+You have two options:
 
-```bash
-render deploy
-```
+#### Option A: Deploy via Dashboard (Easiest)
 
-This creates:
-- PostgreSQL database (`taskflow-db`)
-- Backend API service (`taskflow-api`)
-- Frontend web service (`taskflow-web`)
+1. Ensure `render.yaml` is committed and pushed to your Git repository
+2. Go to [Render Dashboard](https://dashboard.render.com)
+3. Click "New +" → "Blueprint"
+4. Connect your repository and select the branch containing `render.yaml`
+5. Render will automatically detect and deploy all services defined in `render.yaml`
 
-**Note:** The first deployment may take several minutes as Render builds and deploys all services.
+#### Option B: Create Services Manually via CLI
+
+See the "Manual Service Creation" section below for step-by-step CLI commands.
+
+After services are created, proceed to the next steps.
 
 ### Step 2: Get Service URLs
 
 After deployment, get the service URLs:
 
-```bash
-# Get backend URL
-BACKEND_URL=$(render services get taskflow-api --format json | jq -r '.service.serviceDetails.url')
-echo "Backend URL: $BACKEND_URL"
+**Option 1: Use Dashboard**
+- Go to [Render Dashboard](https://dashboard.render.com)
+- Click on each service to see its URL
 
-# Get frontend URL
-FRONTEND_URL=$(render services get taskflow-web --format json | jq -r '.service.serviceDetails.url')
-echo "Frontend URL: $FRONTEND_URL"
+**Option 2: Use CLI (if jq is installed)**
+```bash
+# List services and extract URLs (format may vary)
+render services list --output json | jq -r '.[] | select(.name == "taskflow-api") | .serviceDetails.url'
+render services list --output json | jq -r '.[] | select(.name == "taskflow-web") | .serviceDetails.url'
+```
+
+**Option 3: Interactive CLI**
+```bash
+render services
+# This opens an interactive menu where you can see service URLs"
 ```
 
 If `jq` is not installed, you can get URLs from the dashboard or use:
@@ -109,41 +128,55 @@ render services list
 
 #### Set JWT Secrets
 
-Generate secure JWT secrets:
+**Note:** Environment variables must be set via the Render Dashboard. The CLI doesn't currently support setting environment variables directly.
 
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click on the `taskflow-api` service
+3. Go to "Environment" tab
+4. Add the following environment variables:
+
+Generate secure JWT secrets first:
 ```bash
-# Generate secrets
-JWT_SECRET=$(openssl rand -base64 32)
-JWT_REFRESH_SECRET=$(openssl rand -base64 32)
-
-# Set backend secrets
-render env set JWT_SECRET="$JWT_SECRET" --service taskflow-api
-render env set JWT_REFRESH_SECRET="$JWT_REFRESH_SECRET" --service taskflow-api
+# Generate secrets (run locally)
+openssl rand -base64 32  # Use this for JWT_SECRET
+openssl rand -base64 32  # Use this for JWT_REFRESH_SECRET
 ```
+
+Then add in dashboard:
+- `JWT_SECRET` = (paste first generated value)
+- `JWT_REFRESH_SECRET` = (paste second generated value)
 
 #### Set Frontend Build Variables
 
 The frontend needs `VITE_API_URL` at build time. Since it uses Docker, we need to set it and trigger a rebuild:
 
-```bash
-# Set VITE_API_URL (replace with your actual backend URL)
-render env set VITE_API_URL="https://taskflow-api.onrender.com" --service taskflow-web
-
-# Trigger rebuild (this will redeploy with the new env var)
-render deploys create --service taskflow-web
-```
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click on the `taskflow-web` service
+3. Go to "Environment" tab
+4. Add `VITE_API_URL` = `https://taskflow-api.onrender.com` (replace with your actual backend URL)
+5. Add `VITE_APP_NAME` = `TaskFlow`
+6. Save changes
+7. Trigger a rebuild via dashboard or CLI:
+   ```bash
+   # Get service ID first
+   render services list --output json | jq -r '.[] | select(.name == "taskflow-web") | .id'
+   # Then deploy (replace <SERVICE_ID> with actual ID)
+   render deploys create <SERVICE_ID>
+   ```
 
 #### Set Backend CORS
 
 After the frontend is deployed, set the CORS origin:
 
-```bash
-# Set CORS_ORIGIN (replace with your actual frontend URL)
-render env set CORS_ORIGIN="https://taskflow-web.onrender.com" --service taskflow-api
-
-# Restart backend to apply CORS change
-render services restart --service taskflow-api
-```
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click on the `taskflow-api` service
+3. Go to "Environment" tab
+4. Add `CORS_ORIGIN` = `https://taskflow-web.onrender.com` (replace with your actual frontend URL)
+5. Save changes
+6. Restart the service:
+   ```bash
+   render restart taskflow-api
+   ```
 
 ### Step 4: Run Database Migrations
 
@@ -171,13 +204,14 @@ exit
 #### Check Service Status
 
 ```bash
-# List all services
-render services list
+# List all services (interactive menu)
+render services
 
-# Check specific service status
-render services get taskflow-api
-render services get taskflow-web
-render services get taskflow-db
+# List services as JSON (for scripting)
+render services list --output json
+
+# List services as text
+render services list --output text
 ```
 
 #### View Logs
@@ -303,27 +337,22 @@ render services list
 ### View Service Details
 
 ```bash
-render services get taskflow-api
-render services get taskflow-web
+# Interactive menu - select service to view details
+render services
+
+# Or list as JSON and filter
+render services list --output json | jq '.[] | select(.name == "taskflow-api")'
 ```
 
 ### View Environment Variables
 
-```bash
-# List all env vars (values are hidden for security)
-render env list --service taskflow-api
-render env list --service taskflow-web
-```
+**Note:** Environment variables must be viewed and managed via the Render Dashboard.
 
-### Update Environment Variables
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click on the service
+3. Go to "Environment" tab to view/edit variables
 
-```bash
-# Set a new value
-render env set KEY="value" --service taskflow-api
-
-# Unset a variable
-render env unset KEY --service taskflow-api
-```
+The CLI doesn't currently support viewing or setting environment variables directly.
 
 ### View Logs
 
@@ -348,14 +377,20 @@ render services restart --service taskflow-web
 ### Trigger Manual Deploy
 
 ```bash
-# Deploy latest commit from default branch
-render deploys create --service taskflow-api
+# List services to get service ID
+render services
+
+# Deploy latest commit from default branch (interactive - will prompt for service)
+render deploys create
+
+# Or deploy specific service by ID
+render deploys create <SERVICE_ID>
 
 # Deploy specific commit
-render deploys create --service taskflow-api --commit abc123
+render deploys create <SERVICE_ID> --commit abc123
 
 # Wait for deployment to complete
-render deploys create --service taskflow-api --wait
+render deploys create <SERVICE_ID> --wait
 ```
 
 ### View Deployment History
@@ -381,17 +416,21 @@ render deploys rollback --service taskflow-api --deploy-id <DEPLOY_ID>
 ### View Database Info
 
 ```bash
-render postgres get taskflow-db
+# List all services (databases are services too)
+render services list --output json | jq '.[] | select(.name == "taskflow-db")'
+
+# Or use interactive menu
+render services
 ```
 
 ### Connect to Database
 
 ```bash
-# Get connection string
-render postgres get taskflow-db --format json | jq -r '.database.connectionString'
+# Use Render's built-in psql command
+render psql taskflow-db
 
-# Or use psql directly (if psql is installed)
-psql $(render postgres get taskflow-db --format json | jq -r '.database.connectionString')
+# Or use pgcli for a better experience
+render pgcli taskflow-db
 ```
 
 ### View Database Logs
@@ -432,9 +471,9 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
    ```
 
 2. Verify all required environment variables are set:
-   ```bash
-   render env list --service taskflow-api
-   ```
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-api` service
+   - Check "Environment" tab
 
 3. Check build logs for errors:
    ```bash
@@ -471,15 +510,17 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
 **Solutions:**
 
 1. Verify `CORS_ORIGIN` matches frontend URL exactly:
-   ```bash
-   render env list --service taskflow-api | grep CORS_ORIGIN
-   ```
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-api` service
+   - Check "Environment" tab for `CORS_ORIGIN`
 
 2. Update CORS_ORIGIN:
-   ```bash
-   render env set CORS_ORIGIN="https://taskflow-web.onrender.com" --service taskflow-api
-   render services restart --service taskflow-api
-   ```
+   - In the dashboard, edit `CORS_ORIGIN` to match your frontend URL exactly
+   - Save changes
+   - Restart the service:
+     ```bash
+     render restart taskflow-api
+     ```
 
 3. Ensure no trailing slashes in URLs.
 
@@ -490,15 +531,19 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
 **Solutions:**
 
 1. Verify `VITE_API_URL` is set correctly:
-   ```bash
-   render env list --service taskflow-web | grep VITE_API_URL
-   ```
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-web` service
+   - Check "Environment" tab for `VITE_API_URL`
 
 2. Rebuild frontend with correct API URL:
-   ```bash
-   render env set VITE_API_URL="https://taskflow-api.onrender.com" --service taskflow-web
-   render deploys create --service taskflow-web
-   ```
+   - In the dashboard, set `VITE_API_URL` to your backend URL
+   - Save changes
+   - Trigger a new deployment (this rebuilds with the new env var):
+     ```bash
+     # Get service ID and deploy
+     render services list --output json | jq -r '.[] | select(.name == "taskflow-web") | .id'
+     render deploys create <SERVICE_ID>
+     ```
 
 **Note:** Vite environment variables are embedded at build time. You must rebuild after changing them.
 
@@ -565,15 +610,18 @@ render run "psql $DATABASE_URL < backup.sql" --service taskflow-api
 **Solutions:**
 
 1. Verify environment variables are set before building:
-   ```bash
-   render env list --service taskflow-web
-   ```
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click on `taskflow-web` service
+   - Check "Environment" tab
 
 2. Ensure `VITE_API_URL` is set correctly before triggering a build:
-   ```bash
-   render env set VITE_API_URL="https://taskflow-api.onrender.com" --service taskflow-web
-   render deploys create --service taskflow-web
-   ```
+   - In the dashboard, set `VITE_API_URL` to your backend URL
+   - Save changes
+   - Trigger a new deployment:
+     ```bash
+     render services list --output json | jq -r '.[] | select(.name == "taskflow-web") | .id'
+     render deploys create <SERVICE_ID>
+     ```
 
 3. **Note:** The frontend Dockerfile uses `ARG` for build-time variables. Render should make environment variables available during Docker builds, but if issues persist, you may need to rebuild after setting environment variables.
 
@@ -609,17 +657,24 @@ render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api
 ### Update Environment Variables
 
 **Backend:**
-```bash
-render env set KEY="new-value" --service taskflow-api
-render services restart --service taskflow-api
-```
+- Go to [Render Dashboard](https://dashboard.render.com)
+- Click on `taskflow-api` service
+- Edit environment variables in "Environment" tab
+- Save changes
+- Restart service:
+  ```bash
+  render restart taskflow-api
+  ```
 
 **Frontend:**
-```bash
-# Remember: Vite vars require rebuild
-render env set VITE_API_URL="https://new-api-url.onrender.com" --service taskflow-web
-render deploys create --service taskflow-web
-```
+- Go to [Render Dashboard](https://dashboard.render.com)
+- Click on `taskflow-web` service
+- Edit environment variables in "Environment" tab
+- **Remember:** Vite vars require rebuild, so after saving, trigger a new deployment:
+  ```bash
+  render services list --output json | jq -r '.[] | select(.name == "taskflow-web") | .id'
+  render deploys create <SERVICE_ID>
+  ```
 
 ---
 
@@ -712,28 +767,27 @@ See `scripts/deploy-render.sh` for details.
 # Authentication
 render login
 
-# Deploy from render.yaml
-render deploy
+# Note: render.yaml (blueprints) are deployed via dashboard, not CLI
+# Go to https://dashboard.render.com → New + → Blueprint
 
-# Database
+# Database (if creating manually)
 render postgres create --name taskflow-db --plan starter
 render postgres attach taskflow-db --service taskflow-api
 
-# Environment Variables
-render env set JWT_SECRET="..." --service taskflow-api
-render env list --service taskflow-api
+# Environment Variables (set via Dashboard)
+# Go to dashboard → service → Environment tab
 
 # Deployments
-render deploys create --service taskflow-api
-render deploys list --service taskflow-api
+render services  # List services, then select to deploy
+render deploys create <SERVICE_ID>  # Deploy specific service
 
 # Logs
 render logs --service taskflow-api --follow
 
 # Services
 render services list
-render services get taskflow-api
-render services restart --service taskflow-api
+render services  # Interactive menu
+render restart taskflow-api
 
 # Migrations
 render run "cd apps/api && npx prisma migrate deploy" --service taskflow-api

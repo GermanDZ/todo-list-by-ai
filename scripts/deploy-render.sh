@@ -65,26 +65,34 @@ fi
 
 log_info "Authenticated ✓"
 
-# Step 3: Deploy Infrastructure from render.yaml
-log_info "Deploying infrastructure from render.yaml..."
+# Step 3: Check if services exist
+log_info "Checking if services already exist..."
 
 cd "$PROJECT_ROOT"
 
-# Check if services already exist
-if render services get "$BACKEND_SERVICE" &> /dev/null; then
-    log_warn "Services already exist. Updating existing services..."
-    render deploy --update
+# Check if services exist (this will fail if they don't exist, which is fine)
+SERVICES_EXIST=false
+if render services list --output json 2>/dev/null | grep -q "$BACKEND_SERVICE\|$FRONTEND_SERVICE\|$DATABASE_SERVICE"; then
+    SERVICES_EXIST=true
+    log_info "Services found ✓"
 else
-    log_info "Creating new services..."
-    render deploy
+    log_warn "Services not found. You need to create them first."
+    log_warn ""
+    log_warn "Option 1: Deploy via Dashboard (Recommended):"
+    log_warn "  1. Go to https://dashboard.render.com"
+    log_warn "  2. Click 'New +' → 'Blueprint'"
+    log_warn "  3. Connect your repository"
+    log_warn "  4. Render will detect render.yaml and create all services"
+    log_warn ""
+    log_warn "Option 2: Create services manually via CLI (see docs/deployment-render.md)"
+    log_warn ""
+    read -p "Have you created the services? (y/n): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        log_error "Please create services first, then run this script again"
+        exit 1
+    fi
 fi
-
-if [ $? -ne 0 ]; then
-    log_error "Deployment failed"
-    exit 1
-fi
-
-log_info "Infrastructure deployed ✓"
 
 # Step 4: Wait for services to be ready
 log_info "Waiting for services to be ready..."
@@ -97,9 +105,18 @@ log_info "Retrieving service URLs..."
 BACKEND_URL=""
 FRONTEND_URL=""
 
+# Get service URLs from services list
 if command -v jq &> /dev/null; then
-    BACKEND_URL=$(render services get "$BACKEND_SERVICE" --format json 2>/dev/null | jq -r '.service.serviceDetails.url // empty')
-    FRONTEND_URL=$(render services get "$FRONTEND_SERVICE" --format json 2>/dev/null | jq -r '.service.serviceDetails.url // empty')
+    # Try to get service info - note: exact command may vary
+    BACKEND_INFO=$(render services list --output json 2>/dev/null | jq -r ".[] | select(.name == \"$BACKEND_SERVICE\") | .url // empty" | head -1)
+    FRONTEND_INFO=$(render services list --output json 2>/dev/null | jq -r ".[] | select(.name == \"$FRONTEND_SERVICE\") | .url // empty" | head -1)
+    
+    if [ -n "$BACKEND_INFO" ] && [ "$BACKEND_INFO" != "null" ]; then
+        BACKEND_URL="$BACKEND_INFO"
+    fi
+    if [ -n "$FRONTEND_INFO" ] && [ "$FRONTEND_INFO" != "null" ]; then
+        FRONTEND_URL="$FRONTEND_INFO"
+    fi
 fi
 
 if [ -z "$BACKEND_URL" ] || [ "$BACKEND_URL" == "null" ]; then
@@ -120,49 +137,62 @@ log_info "Frontend URL: $FRONTEND_URL"
 # Step 6: Set JWT Secrets
 log_info "Setting JWT secrets..."
 
-# Check if secrets already exist
-if render env list --service "$BACKEND_SERVICE" 2>/dev/null | grep -q "JWT_SECRET"; then
-    log_warn "JWT_SECRET already exists. Skipping..."
-else
-    JWT_SECRET=$(openssl rand -base64 32)
-    render env set JWT_SECRET="$JWT_SECRET" --service "$BACKEND_SERVICE"
-    log_info "JWT_SECRET set ✓"
-fi
+# Generate secrets
+JWT_SECRET=$(openssl rand -base64 32)
+JWT_REFRESH_SECRET=$(openssl rand -base64 32)
 
-if render env list --service "$BACKEND_SERVICE" 2>/dev/null | grep -q "JWT_REFRESH_SECRET"; then
-    log_warn "JWT_REFRESH_SECRET already exists. Skipping..."
-else
-    JWT_REFRESH_SECRET=$(openssl rand -base64 32)
-    render env set JWT_REFRESH_SECRET="$JWT_REFRESH_SECRET" --service "$BACKEND_SERVICE"
-    log_info "JWT_REFRESH_SECRET set ✓"
-fi
+log_warn "Render CLI doesn't support setting environment variables directly."
+log_warn "Please set the following environment variables in the Render Dashboard:"
+log_warn ""
+log_warn "1. Go to https://dashboard.render.com"
+log_warn "2. Click on '$BACKEND_SERVICE' service"
+log_warn "3. Go to 'Environment' tab"
+log_warn "4. Add these variables:"
+log_warn "   JWT_SECRET=$JWT_SECRET"
+log_warn "   JWT_REFRESH_SECRET=$JWT_REFRESH_SECRET"
+log_warn ""
+read -p "Press Enter after you've set the environment variables..."
 
 # Step 7: Set Frontend Build Variables
 log_info "Setting frontend build variables..."
 
-# Set VITE_API_URL
-render env set VITE_API_URL="$BACKEND_URL" --service "$FRONTEND_SERVICE" 2>/dev/null || true
-log_info "VITE_API_URL set to $BACKEND_URL"
-
-# Set VITE_APP_NAME if not already set
-if ! render env list --service "$FRONTEND_SERVICE" 2>/dev/null | grep -q "VITE_APP_NAME"; then
-    render env set VITE_APP_NAME="TaskFlow" --service "$FRONTEND_SERVICE"
-    log_info "VITE_APP_NAME set ✓"
-fi
+log_warn "Please set frontend environment variables in the Render Dashboard:"
+log_warn ""
+log_warn "1. Go to https://dashboard.render.com"
+log_warn "2. Click on '$FRONTEND_SERVICE' service"
+log_warn "3. Go to 'Environment' tab"
+log_warn "4. Add these variables:"
+log_warn "   VITE_API_URL=$BACKEND_URL"
+log_warn "   VITE_APP_NAME=TaskFlow"
+log_warn "5. Save changes"
+log_warn ""
+read -p "Press Enter after you've set the environment variables..."
 
 # Trigger frontend rebuild with new env vars
-log_info "Triggering frontend rebuild with new environment variables..."
-render deploys create --service "$FRONTEND_SERVICE" --wait || log_warn "Frontend rebuild may still be in progress"
+log_info "Triggering frontend rebuild..."
+FRONTEND_SERVICE_ID=$(render services list --output json 2>/dev/null | jq -r ".[] | select(.name == \"$FRONTEND_SERVICE\") | .id" | head -1)
+if [ -n "$FRONTEND_SERVICE_ID" ] && [ "$FRONTEND_SERVICE_ID" != "null" ]; then
+    render deploys create "$FRONTEND_SERVICE_ID" --wait || log_warn "Frontend rebuild may still be in progress"
+else
+    log_warn "Could not get frontend service ID. Please trigger deployment manually via dashboard."
+fi
 
 # Step 8: Set Backend CORS
 log_info "Setting backend CORS origin..."
 
-render env set CORS_ORIGIN="$FRONTEND_URL" --service "$BACKEND_SERVICE" 2>/dev/null || true
-log_info "CORS_ORIGIN set to $FRONTEND_URL"
+log_warn "Please set CORS_ORIGIN in the Render Dashboard:"
+log_warn ""
+log_warn "1. Go to https://dashboard.render.com"
+log_warn "2. Click on '$BACKEND_SERVICE' service"
+log_warn "3. Go to 'Environment' tab"
+log_warn "4. Add/update: CORS_ORIGIN=$FRONTEND_URL"
+log_warn "5. Save changes"
+log_warn ""
+read -p "Press Enter after you've set CORS_ORIGIN..."
 
 # Restart backend to apply CORS change
 log_info "Restarting backend to apply CORS changes..."
-render services restart --service "$BACKEND_SERVICE" || log_warn "Backend restart may still be in progress"
+render restart "$BACKEND_SERVICE" || log_warn "Backend restart may still be in progress"
 
 # Step 9: Run Database Migrations
 log_info "Running database migrations..."
